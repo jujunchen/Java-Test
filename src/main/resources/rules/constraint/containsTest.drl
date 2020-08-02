@@ -1,0 +1,11 @@
+package rules.constraint;
+
+import drools.*;
+
+rule containsTest
+    when
+        $s:School();
+        $p:Person(className contains $s.className)
+    then
+        System.out.println("恭喜,成功使用contains");
+    end

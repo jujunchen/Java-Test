@@ -1,0 +1,20 @@
+package rules
+
+import drools.Product
+
+//当产品类型是DIAMOND时,打折为15%
+rule Offer4Diamond
+    when
+        productObject:Product(type == Product.DIAMOND)
+    then
+        productObject.setDiscount(15);
+    end
+
+
+//当产品类型是GOLD时，打折为25%
+rule Offer4Gold
+    when
+        productObject: Product(type == Product.GOLD)
+    then
+        productObject.setDiscount(25);
+    end

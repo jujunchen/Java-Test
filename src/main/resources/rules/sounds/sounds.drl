@@ -1,0 +1,11 @@
+package rules.sounds;
+dialect  "mvel"
+
+import drools.*
+
+rule "sounds"
+    when
+        $p:Person(name soundslike "hello")
+    then
+        System.out.println("soundslike 成功匹配");
+end

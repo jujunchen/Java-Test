@@ -1,0 +1,21 @@
+package rules.noloop;
+dialect  "mvel"
+import drools.*
+
+rule "noloop"
+    when
+        $p:Person(age == 30)
+    then
+        $p.setAge(18);
+        update($p)
+        System.out.println("noloop 匹配成功");
+end
+
+
+rule noloop2
+enabled false
+    when
+        $p:Person(age == 18)
+    then
+        System.out.println("noloop2 匹配成功");
+    end

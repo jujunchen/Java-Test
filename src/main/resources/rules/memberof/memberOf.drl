@@ -1,0 +1,27 @@
+package rules.memberof
+
+import drools.*
+
+rule memberOfRule
+    when
+        $s:School()
+        $p:Person(className memberOf "三班");
+    then
+        System.out.println("memberOfRule 成功匹配");
+    end
+
+rule memberOfRule1
+    when
+        $s:School()
+        $p:Person(className memberOf $s.className)
+    then
+        System.out.println("memberOfRule1 成功匹配");
+    end
+
+rule memberOfRule2
+    when
+        $s:School();
+        $p:Person(className memberOf $s.classNameAry)
+    then
+        System.out.println("memberOfRule2 成功匹配");
+    end

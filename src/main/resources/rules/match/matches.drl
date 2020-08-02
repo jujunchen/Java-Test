@@ -1,0 +1,10 @@
+package rules.match;
+
+import drools.*
+
+rule matchesRule
+    when
+        $p:Person(name matches "z.*[a-z]")
+    then
+        System.out.println("matchesRule 成功匹配");
+end

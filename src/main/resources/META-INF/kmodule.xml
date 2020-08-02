@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns="http://www.drools.org/xsd/kmodule">
+    <kbase name="rules" packages="rules">
+        <ksession name="ksession-rule"/>
+    </kbase>
+
+    <kbase name="rules1" packages="rules.constraint">
+        <ksession name="contains"/>
+    </kbase>
+
+    <kbase name="rules2" packages="rules.memberof">
+        <ksession name="memberof"/>
+    </kbase>
+
+    <kbase name="rules3" packages="rules.match">
+        <ksession name="matches"/>
+    </kbase>
+
+    <kbase name="rules4" packages="rules.sounds">
+        <ksession name="soundslike"/>
+    </kbase>
+
+    <kbase name="rules5" packages="rules.str">
+        <ksession name="str"/>
+    </kbase>
+
+    <kbase name="rules6" packages="rules.noloop">
+        <ksession name="noloop"/>
+    </kbase>
+</kmodule>

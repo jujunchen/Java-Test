@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>design.visitor</OriginalElement>
+  <nodes>
+    <node x="379.0" y="247.0">design.visitor.ObjectStructure</node>
+    <node x="0.0" y="450.0">design.visitor.Client</node>
+    <node x="0.0" y="126.0">design.visitor.Fail</node>
+    <node x="241.0" y="126.0">design.visitor.Success</node>
+    <node x="88.5" y="247.0">design.visitor.Person</node>
+    <node x="0.0" y="351.0">design.visitor.Man</node>
+    <node x="120.5" y="0.0">design.visitor.Action</node>
+    <node x="177.0" y="351.0">design.visitor.Woman</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="design.visitor.Success" target="design.visitor.Action">
+      <point x="0.0" y="-38.0" />
+      <point x="351.5" y="101.0" />
+      <point x="286.25" y="101.0" />
+      <point x="55.25" y="38.0" />
+    </edge>
+    <edge source="design.visitor.Man" target="design.visitor.Person">
+      <point x="0.0" y="-27.0" />
+      <point x="78.5" y="326.0" />
+      <point x="127.75" y="326.0" />
+      <point x="-39.25" y="27.0" />
+    </edge>
+    <edge source="design.visitor.Woman" target="design.visitor.Person">
+      <point x="0.0" y="-27.0" />
+      <point x="255.5" y="326.0" />
+      <point x="206.25" y="326.0" />
+      <point x="39.25" y="27.0" />
+    </edge>
+    <edge source="design.visitor.Fail" target="design.visitor.Action">
+      <point x="0.0" y="-38.0" />
+      <point x="110.5" y="101.0" />
+      <point x="175.75" y="101.0" />
+      <point x="-55.25" y="38.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="73.5" y="284.0" />
+  <SelectedNodes>
+    <node>design.visitor.ObjectStructure</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Fields</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

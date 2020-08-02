@@ -1,0 +1,11 @@
+package rules.str;
+dialect  "mvel"
+
+import drools.*
+
+rule "str"
+    when
+        $p:Person(name str[startsWith] "张")
+    then
+        System.out.println("str startsWith 成功匹配");
+end
