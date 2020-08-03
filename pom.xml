@@ -8,11 +8,11 @@
   <name>index Maven Webapp</name>
   <url>http://maven.apache.org</url>
 
-  <repositories>
+<!--  <repositories>
     <repository>
       <id>jboss-maven2-release-repository</id>
       <url>https://repo1.maven.org/maven2/</url></repository>
-  </repositories>
+  </repositories>-->
 
   <dependencies>
     <dependency>
