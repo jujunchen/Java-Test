@@ -29,6 +29,7 @@ public class ObjectPoolDemo {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+
                 endcount.getAndIncrement();
             }
         }
