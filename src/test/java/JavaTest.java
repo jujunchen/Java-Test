@@ -457,6 +457,14 @@ public class JavaTest extends TestSuite {
 
         System.out.println("结果为：" + result);
     }
+    
+    @Test
+    public void bitCalculation() {
+        int a = 100;
+        System.out.println(a << 1);
+        System.out.println(a >> 1);
+    }
+
 
 }
 
