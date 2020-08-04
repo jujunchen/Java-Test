@@ -24,7 +24,6 @@ public class ObjectPoolDemo {
                     System.out.println("== " + i + " ==");
                     obj = pool.borrowObject();
                     System.out.println(obj = " is get");
-
                     pool.returnObject(obj);
                 }
             } catch (Exception e) {
