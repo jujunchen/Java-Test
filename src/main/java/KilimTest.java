@@ -4,6 +4,7 @@ import kilim.Pausable;
 import kilim.Task;
 
 /**
+ * Kilim 测试
  * @author jujun chen
  * @date 2020/08/07
  */
@@ -18,7 +19,7 @@ public class KilimTest extends Task {
     }
 
     public static void main(String[] args) {
-        if (kilim.tools.Kilim.trampoline(false,args)) return;
+//        if (kilim.tools.Kilim.trampoline(false,args)) return;
 
         Task sender = new KilimTest(1).start();
         Task reciever = new KilimTest(0).start();

@@ -173,14 +173,28 @@
         </plugin>
 
         <plugin>
-          <groupId>org.db4j</groupId>
-          <artifactId>kilim</artifactId>
-          <version>2.0.1</version>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
           <executions>
             <execution>
-              <goals><goal>weave</goal></goals>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>exec</goal>
+              </goals>
             </execution>
           </executions>
+          <configuration>
+            <classpathScope>compile</classpathScope>
+            <executable>java</executable>
+            <arguments>
+              <argument>-classpath</argument>
+              <classpath />
+              <argument>kilim.tools.Weaver</argument>
+              <argument>-d</argument>
+              <argument>${project.build.outputDirectory}</argument>
+              <argument>${project.build.outputDirectory}</argument>
+            </arguments>
+          </configuration>
         </plugin>
 
       </plugins>
