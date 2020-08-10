@@ -1,7 +1,8 @@
-import junit.framework.TestSuite;
+import lombok.SneakyThrows;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author: jujun chen
@@ -45,6 +46,61 @@ public class JVMTest {
         } catch (Exception | OutOfMemoryError ex) {
             ex.printStackTrace();
             System.out.println("thread count: " + i);
+        }
+    }
+
+    //STM对应用的影响
+    @SneakyThrows
+    @Test
+    public void stwTest() {
+        STMThread  stmThread = new STMThread();
+        PrintThread printThread = new PrintThread();
+        stmThread.start();
+        printThread.start();
+
+        Thread.sleep(100000);
+    }
+
+    static class STMThread extends Thread {
+        HashMap map = new HashMap();
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    //防止内存溢出
+                    if (map.size() * 512/1024/1024 >= 400) {
+                        map.clear();
+                        System.out.println("clean map");
+                    }
+                    byte[] b1;
+                    for (int i = 0; i < 100; i++) {
+                        //模拟内存占用
+                        b1 = new byte[512];
+                        map.put(System.nanoTime(), b1);
+                    }
+                    Thread.sleep(1);
+                }
+            } catch (Exception ex) {
+
+            }
+        }
+    }
+
+    static class PrintThread extends Thread {
+        public static final long startTime = System.currentTimeMillis();
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    long t = System.currentTimeMillis() - startTime;
+                    System.out.println(t/1000 + "." + t%1000);
+                    Thread.sleep(100);
+                }
+            } catch (Exception e) {
+
+            }
         }
     }
 

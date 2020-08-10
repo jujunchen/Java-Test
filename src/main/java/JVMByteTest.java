@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
  * @description:
  * @date: 2020-08-08
  */
-public class JVMTest {
+public class JVMByteTest {
 
     public static void main(String[] args) throws InterruptedException {
         test4();
