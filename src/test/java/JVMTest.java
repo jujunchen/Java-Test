@@ -71,6 +71,19 @@ public class JVMTest {
         b3 = new byte[1024*1024*4];
     }
 
+    @Test
+    public void heapSize() throws InterruptedException {
+        ArrayList<Object> objects = new ArrayList<>();
+        while (true) {
+            byte[] bytes = new byte[1024 * 1024];
+            objects.add(bytes);
+            if (objects.size() == 10)
+                objects = new ArrayList<>();
+            Thread.sleep(1);
+        }
+
+    }
+
     static class STMThread extends Thread {
         HashMap map = new HashMap();
 
