@@ -61,6 +61,16 @@ public class JVMTest {
         Thread.sleep(100000);
     }
 
+    @Test
+    public void putInEden() {
+        byte[] b1,b2,b3,b4;
+        b1 = new byte[1024*512]; //0.5M
+        b2 = new byte[1024*1024*4];  //4M
+        b3 = new byte[1024*1024*4];
+        b3 = null;
+        b3 = new byte[1024*1024*4];
+    }
+
     static class STMThread extends Thread {
         HashMap map = new HashMap();
 
@@ -95,7 +105,7 @@ public class JVMTest {
             try {
                 while (true) {
                     long t = System.currentTimeMillis() - startTime;
-                    System.out.println(t/1000 + "." + t%1000);
+//                    System.out.println(t/1000 + "." + t%1000);
                     Thread.sleep(100);
                 }
             } catch (Exception e) {
