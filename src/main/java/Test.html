@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<input type="button" id="id11" value="id1"/>
+<input type="button" id="id12" value="id2"/>
+<input type="button" id="id13" value="id3"/>
+<video style="display: none" id="id1" loop="" autoplay="" src="https://ruxin-uat.gtdreamlife.com/mag/hls/9d4c17621b8a4b5f8d7257fa8ae96562/1/live.m3u8"></video>
+<video style="display: none" id="id2" loop="" autoplay="" src="https://ruxin-uat.gtdreamlife.com/mag/hls/f37c61a896b94ee69c29144737ec03ce/1/live.m3u8"></video>
+<video style="display: none" id="id3" loop="" autoplay="" src="https://ruxin-uat.gtdreamlife.com/mag/hls/0fdcc756d9fe434aa3b7d51223210c69/1/live.m3u8"></video>
+
+<script>
+    $(function() {
+        /*$("#id1").hidden();
+        $("#id2").hidden();
+        $("#id3").hidden();*/
+
+        $("#id11").click(function() {
+            $("#id1").show();
+        });
+        $("#id12").click(function() {
+            $("#id2").show();
+        });
+        $("#id13").click(function() {
+            $("#id3").show();
+        });
+    })
+</script>
+</body>
+</html>

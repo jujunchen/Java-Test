@@ -69,6 +69,9 @@ public class JVMTest {
         b3 = new byte[1024*1024*4];
         b3 = null;
         b3 = new byte[1024*1024*4];
+
+        // -XX:+DisableExplicitGC 禁用显示GC
+//        System.gc();
     }
 
     @Test
@@ -83,6 +86,21 @@ public class JVMTest {
         }
 
     }
+
+    //-XX:CompileThreshold=1500 -XX:+PrintCompilation -XX:+CITime
+    //JIT编译测试
+    @Test
+    public void jitTest() {
+        for (int i = 0; i < 1400; i++) {
+            testJIT();
+        }
+    }
+
+    static long i = 0;
+    private void testJIT() {
+        i++;
+    }
+
 
     static class STMThread extends Thread {
         HashMap map = new HashMap();
