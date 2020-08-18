@@ -1,2 +1,2 @@
 # Java-Test
-My Java test.
+some Java tests.
