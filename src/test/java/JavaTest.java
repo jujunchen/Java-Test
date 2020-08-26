@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -463,6 +464,23 @@ public class JavaTest extends TestSuite {
         int a = 100;
         System.out.println(a << 1);
         System.out.println(a >> 1);
+    }
+
+    /**
+     * removeIf测试
+     */
+    @Test
+    public void removeIfTest() {
+        List<String> stringList = new ArrayList<>(){
+            {
+                add("a");
+                add("b");
+                add("c");
+            }
+        };
+
+        stringList.removeIf(item -> item.equals("b"));
+        System.out.println(stringList);
     }
 
 
