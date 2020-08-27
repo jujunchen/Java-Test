@@ -3,17 +3,23 @@ package es;
 import lombok.SneakyThrows;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.HttpAsyncResponseConsumerFactory;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.NodeSelector;
 import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
@@ -86,10 +92,24 @@ public class ESTest {
         Request request = new Request("GET", "/");
         //设置request请求参数
         request.addParameter("pretty", "true");
-//        request.setEntity(new NStringEntity());
+        //设置HttpEntity
+        request.setEntity(new NStringEntity("{\"json\":\"text\"}", ContentType.APPLICATION_JSON));
+        //设置json字符串
+        request.setJsonEntity("{\"json\":\"text\"}");
+
+        //这种方式不能正确验证
+        /*RequestOptions.Builder builder = RequestOptions.DEFAULT.toBuilder();
+        builder.addHeader("Authorization", "Basic ZWxhc3RpYyUzQUVsYXN0aWMxMjM0NTY=");
+        builder.setHttpAsyncResponseConsumerFactory(
+                new HttpAsyncResponseConsumerFactory.HeapBufferedResponseConsumerFactory(30 * 1024 * 1024)
+        );
+        RequestOptions requestOptions = builder.build();
+        request.setOptions(requestOptions);*/
 
         Response response = restClient.performRequest(request);
         System.out.println(response);
+        //输出返回结果
+        System.out.println(EntityUtils.toString(response.getEntity()));
     }
 
 
