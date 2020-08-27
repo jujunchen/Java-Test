@@ -10,10 +10,12 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.NodeSelector;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.junit.After;
@@ -82,8 +84,32 @@ public class ESTest {
     @Test
     public void performRequest() {
         Request request = new Request("GET", "/");
+        //设置request请求参数
+        request.addParameter("pretty", "true");
+//        request.setEntity(new NStringEntity());
 
         Response response = restClient.performRequest(request);
         System.out.println(response);
     }
+
+
+    /**
+     * 异步请求
+     */
+    @Test
+    public void performRequestAsync() {
+        Request request = new Request("GET", "/");
+        restClient.performRequestAsync(request, new ResponseListener() {
+            @Override
+            public void onSuccess(Response response) {
+                System.out.println(response);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }
