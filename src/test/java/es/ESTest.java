@@ -16,6 +16,8 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.NodeSelector;
 import org.elasticsearch.client.Request;
@@ -28,6 +30,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.After;
 import org.junit.Test;
 
@@ -184,18 +187,34 @@ public class ESTest {
         });
     }
 
+    private static final String INDEX = "firstindex";
+
     /**
      * 使用高级客户端创建索引
      */
     @SneakyThrows
     @Test
     public void createIndex() {
-        CreateIndexRequest createIndexRequest = new CreateIndexRequest("firstindex");
-        boolean indexIsExist = restHighLevelClient.indices().exists(new GetIndexRequest("firstindex"), RequestOptions.DEFAULT);
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX);
+        boolean indexIsExist = restHighLevelClient.indices().exists(new GetIndexRequest(INDEX), RequestOptions.DEFAULT);
         if (!indexIsExist) {
             CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             System.out.println(createIndexResponse.index());
         }
+    }
+
+    @SneakyThrows
+    @Test
+    public void addData() {
+        IndexRequest request = new IndexRequest(INDEX);
+        request.id("1");
+
+        //String创建
+        String jsonStr = "{\"name\":\"xxx\",\"sex\":\"男\"}";
+        request.source(jsonStr, XContentType.JSON);
+
+        IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        System.out.println(indexResponse);
     }
 
 }
