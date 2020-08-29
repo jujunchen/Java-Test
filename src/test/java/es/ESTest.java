@@ -3,7 +3,6 @@ package es;
 import lombok.SneakyThrows;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -11,11 +10,12 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.client.HttpAsyncResponseConsumerFactory;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.NodeSelector;
 import org.elasticsearch.client.Request;
@@ -24,12 +24,12 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.sniff.SniffOnFailureListener;
+import org.elasticsearch.client.sniff.Sniffer;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 /**
  * @author jujun chen
@@ -39,11 +39,40 @@ public class ESTest {
 
     private static final String HOST = "es-cn-6ja1st4nc00082bam.public.elasticsearch.aliyuncs.com";
     private static final Integer PORT = 9200;
+    public static final String PROTOCOL = "http";
 
-    public static RestClient restClient = null;
+    //初级客户端
+    private RestClient restClient;
+    //高级客户端
+    private RestHighLevelClient restHighLevelClient;
 
     public ESTest() {
-        RestClientBuilder builder = RestClient.builder(new HttpHost(HOST, PORT, "http"));
+        //初级客户端初始化
+        primaryClientInit();
+        //高级客户端初始化
+        highLevelClientInit();
+    }
+
+    private void highLevelClientInit() {
+        RestClientBuilder builder = RestClient.builder(new HttpHost(HOST, PORT, PROTOCOL));
+        //配置账号密码
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "Elastic123456"));
+        //设置账号密码
+        builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+            @Override
+            public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
+                return httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+                        //修改线程数量
+                        .setDefaultIOReactorConfig(IOReactorConfig.custom().setIoThreadCount(5).build());
+            }
+        });
+        //可以通过低级客户端构建高级客户端
+        restHighLevelClient = new RestHighLevelClient(builder);
+    }
+
+    public void primaryClientInit() {
+        RestClientBuilder builder = RestClient.builder(new HttpHost(HOST, PORT, PROTOCOL));
         //配置账号密码
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "Elastic123456"));
@@ -63,17 +92,40 @@ public class ESTest {
         builder.setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
             @Override
             public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
-                return requestConfigBuilder.setSocketTimeout(10000);
+                return requestConfigBuilder.setSocketTimeout(10000).setConnectTimeout(5000);
             }
         });
         //设置账号密码
         builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
             @Override
             public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
-                return httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                return httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+                        //修改线程数量
+                        .setDefaultIOReactorConfig(IOReactorConfig.custom().setIoThreadCount(5).build());
             }
         });
+        //手动配置节点选择器
+        /*builder.setNodeSelector(new NodeSelector() {
+            @Override
+            public void select(Iterable<Node> iterable) {
+
+            }
+        });*/
+        //配置失败嗅探器，先配置监听器
+        SniffOnFailureListener sniffOnFailureListener = new SniffOnFailureListener();
+        builder.setFailureListener(sniffOnFailureListener);
+
         restClient = builder.build();
+
+        //配置嗅探器，能自动发现集群中运行的节点，配置为现有RestClient的实例
+        Sniffer sniffer = Sniffer.builder(restClient)
+                //配置5分钟更新一次 节点
+                .setSniffIntervalMillis(5 * 60 * 1000)
+                //失败后延迟1分钟
+                .setSniffAfterFailureDelayMillis(60000).build();
+        //配置失败时启用嗅探器，更新节点列表
+        sniffOnFailureListener.setSniffer(sniffer);
+
     }
 
     @SneakyThrows
@@ -130,6 +182,20 @@ public class ESTest {
                 e.printStackTrace();
             }
         });
+    }
+
+    /**
+     * 使用高级客户端创建索引
+     */
+    @SneakyThrows
+    @Test
+    public void createIndex() {
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest("firstindex");
+        boolean indexIsExist = restHighLevelClient.indices().exists(new GetIndexRequest("firstindex"), RequestOptions.DEFAULT);
+        if (!indexIsExist) {
+            CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+            System.out.println(createIndexResponse.index());
+        }
     }
 
 }
