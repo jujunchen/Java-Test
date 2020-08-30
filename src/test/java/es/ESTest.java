@@ -203,6 +203,9 @@ public class ESTest {
         }
     }
 
+    /**
+     * 添加数据
+     */
     @SneakyThrows
     @Test
     public void addData() {
@@ -215,6 +218,6 @@ public class ESTest {
 
         IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
         System.out.println(indexResponse);
-    }
+     }
 
 }
