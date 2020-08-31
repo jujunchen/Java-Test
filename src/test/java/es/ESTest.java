@@ -16,6 +16,8 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Node;
@@ -219,5 +221,17 @@ public class ESTest {
         IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
         System.out.println(indexResponse);
      }
+
+    /**
+     * 获取数据
+     */
+    @SneakyThrows
+    @Test
+    public void getData() {
+        GetRequest getRequest = new GetRequest(INDEX);
+        getRequest.id("1");
+        GetResponse getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+        System.out.println(getResponse.getSource());
+    }
 
 }
