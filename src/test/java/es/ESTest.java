@@ -32,9 +32,14 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.After;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author jujun chen
@@ -213,12 +218,34 @@ public class ESTest {
     public void addData() {
         IndexRequest request = new IndexRequest(INDEX);
         request.id("1");
-
         //String创建
-        String jsonStr = "{\"name\":\"xxx\",\"sex\":\"男\"}";
+        String jsonStr = "{\"name\":\"小红\",\"sex\":\"女\"}";
         request.source(jsonStr, XContentType.JSON);
 
         IndexResponse indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        System.out.println(indexResponse);
+
+        //Map创建
+        Map<String, String> jsonMap = new HashMap<>();
+        jsonMap.put("name", "小明");
+        jsonMap.put("sex", "男");
+        request.id("2").source(jsonMap);
+        indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        System.out.println(indexResponse);
+
+        //基于XContentBuilder创建
+        XContentBuilder builder = XContentFactory.jsonBuilder();
+        builder.startObject();
+        builder.field("name", "小刘");
+        builder.field("sex", "男");
+        builder.endObject();
+        request.id("3").source(builder);
+        indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        System.out.println(indexResponse);
+
+        //使用键值对的形式,必须是偶数个数
+        request.id("4").source("name", "小强", "sex","男");
+        indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
         System.out.println(indexResponse);
      }
 
@@ -231,7 +258,7 @@ public class ESTest {
         GetRequest getRequest = new GetRequest(INDEX);
         getRequest.id("1");
         GetResponse getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
-        System.out.println(getResponse.getSource());
+        System.out.println(getResponse);
     }
 
 }
