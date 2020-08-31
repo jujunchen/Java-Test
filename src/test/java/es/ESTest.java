@@ -14,6 +14,7 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -247,6 +248,21 @@ public class ESTest {
         request.id("4").source("name", "小强", "sex","男");
         indexResponse = restHighLevelClient.index(request, RequestOptions.DEFAULT);
         System.out.println(indexResponse);
+        //异步
+        ActionListener actionListener = new ActionListener<IndexResponse>() {
+            @Override
+            public void onResponse(IndexResponse indexResponse) {
+                //执行成功
+                System.out.println("异步执行成功：" + indexResponse);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                e.printStackTrace();
+            }
+        };
+        restHighLevelClient.indexAsync(request, RequestOptions.DEFAULT, actionListener);
+        Thread.sleep(1000);
      }
 
     /**
