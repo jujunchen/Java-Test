@@ -17,6 +17,8 @@ import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -284,6 +286,29 @@ public class ESTest {
         getRequest.fetchSourceContext(fetchSourceContext);
         getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
         System.out.println(getResponse);
+    }
+
+    /**
+     * 校验某个文档是否存在于索引中
+     */
+    @SneakyThrows
+    @Test
+    public void checkExistIndex() {
+        GetRequest getRequest = new GetRequest(INDEX, "1");
+        //同步方式
+        boolean exists = restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT);
+        //异步方式
+//        restHighLevelClient.existsAsync();
+        assert exists;
+
+        /**
+         * 删除以后再判断是否存在
+         */
+        DeleteRequest deleteRequest = new DeleteRequest(INDEX, "1");
+        DeleteResponse deleteResponse = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+        System.out.println(deleteResponse);
+        exists = restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT);
+        assert !exists;
     }
 
 }
