@@ -33,9 +33,11 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.After;
 import org.junit.Test;
 
@@ -274,6 +276,13 @@ public class ESTest {
         GetRequest getRequest = new GetRequest(INDEX);
         getRequest.id("1");
         GetResponse getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+        System.out.println(getResponse);
+
+        String[] includes = Strings.EMPTY_ARRAY;
+        String[] excludes = new String[] {"name"};
+        FetchSourceContext fetchSourceContext = new FetchSourceContext(true, includes, excludes);
+        getRequest.fetchSourceContext(fetchSourceContext);
+        getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
         System.out.println(getResponse);
     }
 
