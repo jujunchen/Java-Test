@@ -23,6 +23,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.NodeSelector;
 import org.elasticsearch.client.Request;
@@ -309,6 +311,35 @@ public class ESTest {
         System.out.println(deleteResponse);
         exists = restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT);
         assert !exists;
+    }
+
+    /**
+     * 更新文档数据
+     */
+    @SneakyThrows
+    @Test
+    public void updateIndexDocuments() {
+        UpdateRequest updateRequest = new UpdateRequest(INDEX, "2");
+        //同样提供几种数据格式来更新数据
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("name", "小陈1");
+        jsonMap.put("sex", "男");
+        updateRequest.doc(jsonMap);
+        UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+        System.out.println(updateResponse);
+        GetResponse getResponse = restHighLevelClient.get(new GetRequest(INDEX, "2"), RequestOptions.DEFAULT);
+        System.out.println(getResponse);
+
+        //如果更新文档不存在，则插入
+        updateRequest = new UpdateRequest(INDEX, "1");
+        IndexRequest indexRequest = new IndexRequest(INDEX);
+        indexRequest.source(jsonMap);
+        //不存在就执行indexRequest
+        updateRequest.doc(jsonMap).upsert(indexRequest);
+        restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+        getResponse = restHighLevelClient.get(new GetRequest(INDEX, "1"), RequestOptions.DEFAULT);
+        System.out.println(getResponse);
+
     }
 
 }
