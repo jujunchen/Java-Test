@@ -34,6 +34,8 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.TermVectorsRequest;
+import org.elasticsearch.client.core.TermVectorsResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
@@ -339,7 +341,20 @@ public class ESTest {
         restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
         getResponse = restHighLevelClient.get(new GetRequest(INDEX, "1"), RequestOptions.DEFAULT);
         System.out.println(getResponse);
+    }
 
+    /**
+     * 获取文档词向量,词的统计信息
+     */
+    @SneakyThrows
+    @Test
+    public void getTermVectors() {
+        TermVectorsRequest request = new TermVectorsRequest(INDEX, "1");
+        request.setFields("name");
+
+        TermVectorsResponse response = restHighLevelClient.termvectors(request, RequestOptions.DEFAULT);
+        System.out.println(response.getIndex());
+        System.out.println(response.getDocVersion());
     }
 
 }
