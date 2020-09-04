@@ -357,4 +357,12 @@ public class ESTest {
         System.out.println(response.getDocVersion());
     }
 
+    /**
+     * 批量添加数组
+     */
+    @Test
+    public void bulkIndex() {
+
+    }
+
 }
