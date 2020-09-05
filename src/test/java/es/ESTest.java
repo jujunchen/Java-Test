@@ -14,13 +14,20 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.apache.zookeeper.MultiResponse;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.bulk.BulkProcessor;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -40,6 +47,7 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -47,6 +55,7 @@ import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.After;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -360,9 +369,93 @@ public class ESTest {
     /**
      * 批量添加数组
      */
+    @SneakyThrows
     @Test
     public void bulkIndex() {
+        BulkRequest bulkRequest = new BulkRequest();
+        bulkRequest.add(new IndexRequest(INDEX).id("4").source("name", "小红", "sex", "女"));
+        bulkRequest.add(new IndexRequest(INDEX).id("5").source("name", "小黄", "sex", "男"));
 
+        //同步方式请求
+        BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+        System.out.println(bulkResponse.status());
+
+        //异步方式，通过ActionListener来监听
+
+        //查询一下结果
+        GetResponse getResponse = restHighLevelClient.get(new GetRequest(INDEX).id("5"), RequestOptions.DEFAULT);
+        System.out.println(getResponse);
+    }
+
+    /**
+     * bulkProcessor批处理操作
+     */
+    @SneakyThrows
+    @Test
+    public void bulkProcessor() {
+        BulkProcessor.Listener listener = new BulkProcessor.Listener() {
+            @Override
+            public void beforeBulk(long executionId, BulkRequest request) {
+                //处理前
+                System.out.println("Executing bulk " + executionId + " actions " + request.numberOfActions());
+            }
+
+            @SneakyThrows
+            @Override
+            public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+                //处理后
+                if (response.hasFailures()) {
+                    System.out.println("Bulk " + executionId + "executed fail");
+                } else {
+                    System.out.println("Bulk " + executionId + "completed in " + response.getTook().getMillis() + " milliseconds");
+
+                }
+            }
+
+            @Override
+            public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+                //批处理失败后
+                failure.printStackTrace();
+            }
+        };
+
+        BulkProcessor.Builder builder= BulkProcessor.builder((request, bulkListener)
+                -> restHighLevelClient.bulkAsync(request, RequestOptions.DEFAULT, bulkListener), listener);
+
+        builder.setBulkActions(500);
+        builder.setFlushInterval(TimeValue.timeValueSeconds(10));
+
+        BulkProcessor bulkProcessor = builder.build();
+
+        bulkProcessor.add(new IndexRequest(INDEX).id("7").source("name", "小强"));
+        bulkProcessor.add(new UpdateRequest(INDEX, "4").doc("name", "小黄"));
+
+        bulkProcessor.flush();
+        bulkProcessor.close();
+
+
+       Thread.sleep(1000);
+
+        GetResponse getResponse = restHighLevelClient.get(new GetRequest(INDEX, "7"), RequestOptions.DEFAULT);
+        System.out.println(getResponse);
+    }
+
+    /**
+     * multiGet 批处理请求
+     */
+    @SneakyThrows
+    @Test
+    public void multiGet() {
+        MultiGetRequest multiGetRequest = new MultiGetRequest();
+        multiGetRequest.add(new MultiGetRequest.Item(INDEX, "1"));
+        multiGetRequest.add(new MultiGetRequest.Item(INDEX, "2"));
+        multiGetRequest.add(new MultiGetRequest.Item(INDEX, "7"));
+
+
+        MultiGetResponse multiResponse = restHighLevelClient.mget(multiGetRequest, RequestOptions.DEFAULT);
+        for (MultiGetItemResponse response : multiResponse.getResponses()) {
+            System.out.println(response.getResponse());
+        }
     }
 
 }
