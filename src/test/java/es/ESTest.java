@@ -14,7 +14,6 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.apache.zookeeper.MultiResponse;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
@@ -41,6 +40,8 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.MultiTermVectorsRequest;
+import org.elasticsearch.client.core.MultiTermVectorsResponse;
 import org.elasticsearch.client.core.TermVectorsRequest;
 import org.elasticsearch.client.core.TermVectorsResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
@@ -51,11 +52,15 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.ReindexRequest;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.junit.After;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -213,6 +218,7 @@ public class ESTest {
     }
 
     private static final String INDEX = "firstindex";
+    private static final String TWO_INDEX = "twoindex";
 
     /**
      * 使用高级客户端创建索引
@@ -455,6 +461,94 @@ public class ESTest {
         MultiGetResponse multiResponse = restHighLevelClient.mget(multiGetRequest, RequestOptions.DEFAULT);
         for (MultiGetItemResponse response : multiResponse.getResponses()) {
             System.out.println(response.getResponse());
+        }
+    }
+
+    /**
+     * 文档重新索引
+     */
+    @SneakyThrows
+    @Test
+    public void reIndexRequest() {
+        restHighLevelClient.indices().create(new org.elasticsearch.client.indices.CreateIndexRequest(TWO_INDEX), RequestOptions.DEFAULT);
+
+        ReindexRequest reindexRequest = new ReindexRequest();
+        reindexRequest.setSourceIndices(INDEX);
+        //towIndex 文档索引必须先存在
+        reindexRequest.setDestIndex(TWO_INDEX);
+
+        BulkByScrollResponse bulkByScrollResponse = restHighLevelClient.reindex(reindexRequest, RequestOptions.DEFAULT);
+        System.out.println(bulkByScrollResponse.getSearchFailures());
+    }
+
+    /**
+     * 检测是否已经将数据复制到了twoindex索引中
+     */
+    @SneakyThrows
+    @Test
+    public void getResponseById6() {
+        GetResponse getResponse = restHighLevelClient.get(new GetRequest(TWO_INDEX).id("7"), RequestOptions.DEFAULT);
+        System.out.println(getResponse);
+    }
+
+    /**
+     * 查询时更新，不知道这个接口有什么用？
+     */
+    @SneakyThrows
+    @Test
+    public void updateByQueryRequest() {
+        UpdateByQueryRequest updateByQueryRequest = new UpdateByQueryRequest(INDEX);
+
+        BulkByScrollResponse bulkByScrollResponse = restHighLevelClient.updateByQuery(updateByQueryRequest, RequestOptions.DEFAULT);
+        System.out.println(bulkByScrollResponse);
+    }
+
+    /**
+     * 文档查询时删除,为什么没有效果？？
+     */
+    @SneakyThrows
+    @Test
+    public void deleteByQueryRequest() {
+        DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest(INDEX);
+
+        //id=4
+        deleteByQueryRequest.setQuery(new TermQueryBuilder("id", "4"));
+        deleteByQueryRequest.setRefresh(true);
+
+        BulkByScrollResponse bulkByScrollResponse = restHighLevelClient.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
+        System.out.println(bulkByScrollResponse);
+
+        //查询一下是否删除了
+        GetResponse getResponse = restHighLevelClient.get(new GetRequest(INDEX).id("4"), RequestOptions.DEFAULT);
+        System.out.println("id = 4: " + getResponse);
+    }
+
+    /**
+     * 批量获取词向量
+     */
+    @SneakyThrows
+    @Test
+    public void multiTermRequest() {
+        //1
+        MultiTermVectorsRequest termVectorsRequest = new MultiTermVectorsRequest();
+        String[] ids = new String[]{"7", "4"};
+        for (String id : ids) {
+            TermVectorsRequest request = new TermVectorsRequest(INDEX, id);
+            request.setFields("name");
+            termVectorsRequest.add(request);
+        }
+        MultiTermVectorsResponse response = restHighLevelClient.mtermvectors(termVectorsRequest, RequestOptions.DEFAULT);
+        for (TermVectorsResponse termVectorsRespons : response.getTermVectorsResponses()) {
+            System.out.println(termVectorsRespons.getIndex());
+        }
+
+        //方法2
+        TermVectorsRequest termVectorsRequest2 = new TermVectorsRequest(INDEX, "1");
+        termVectorsRequest2.setFields("name");
+        termVectorsRequest = new MultiTermVectorsRequest(ids, termVectorsRequest2);
+        response = restHighLevelClient.mtermvectors(termVectorsRequest, RequestOptions.DEFAULT);
+        for (TermVectorsResponse termVectorsRespons : response.getTermVectorsResponses()) {
+            System.out.println(termVectorsRespons.getId());
         }
     }
 
