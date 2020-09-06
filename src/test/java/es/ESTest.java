@@ -29,6 +29,8 @@ import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
@@ -670,9 +672,33 @@ public class ESTest {
     /**
      * 批量搜索
      */
+    @SneakyThrows
     @Test
     public void multiSearchRequest() {
+        MultiSearchRequest multiSearchRequest = new MultiSearchRequest();
 
+        SearchRequest searchRequest1 = new SearchRequest(INDEX);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//        searchSourceBuilder.query(QueryBuilders.boolQuery().should(QueryBuilders.termQuery("name", "小红")));
+        searchSourceBuilder.query(QueryBuilders.matchQuery("name", "小红"));
+        searchRequest1.source(searchSourceBuilder);
+        multiSearchRequest.add(searchRequest1);
+
+        SearchRequest searchRequest2 = new SearchRequest(INDEX);
+        SearchSourceBuilder searchSourceBuilder2 = new SearchSourceBuilder();
+        searchSourceBuilder2.query(QueryBuilders.termQuery("name", "小陈"));
+        searchRequest2.source(searchSourceBuilder2);
+        multiSearchRequest.add(searchRequest2);
+
+        MultiSearchResponse multiSearchResponse = restHighLevelClient.msearch(multiSearchRequest, RequestOptions.DEFAULT);
+
+        for (MultiSearchResponse.Item item : multiSearchResponse.getResponses()) {
+            SearchResponse searchResponse = item.getResponse();
+            SearchHits hits = searchResponse.getHits();
+            for (SearchHit hit : hits.getHits()) {
+                System.out.println(hit.getSourceAsString());
+            }
+        }
     }
 
 }
