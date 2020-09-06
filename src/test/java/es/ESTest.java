@@ -31,6 +31,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Node;
@@ -594,6 +595,7 @@ public class ESTest {
 
         //建议请求
 
+
         searchRequest.source(searchSourceBuilder);
 
         //从0开始搜索
@@ -617,6 +619,60 @@ public class ESTest {
         Aggregations aggregations = searchResponse.getAggregations();
         Map<String, Aggregation> byAgeAvg = aggregations.getAsMap();
         System.out.println("avg_age = " + ((ParsedAvg)byAgeAvg.get("avg_age")).getValue());
+    }
+
+    /**
+     * 滚动搜索
+     */
+    @SneakyThrows
+    @Test
+    public void scrollSearchRequest() {
+        SearchRequest searchRequest = new SearchRequest(INDEX);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(QueryBuilders.matchQuery("sex", "男"));
+        searchSourceBuilder.size(3);
+
+        searchRequest.source(searchSourceBuilder);
+
+        //设置滚动间隔
+        searchRequest.scroll(TimeValue.timeValueSeconds(1));
+
+        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+
+        //返回滚动的ID
+        String scrollId = searchResponse.getScrollId();
+
+        //检索第一批结果
+        SearchHits hits = searchResponse.getHits();
+
+        for (SearchHit hit : hits.getHits()) {
+            System.out.println(hit.getSourceAsString());
+        }
+
+        for (;hits != null && hits.getHits().length != 0;) {
+            //设置滚动标识
+            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+            //设置搜索滚动的过期时间
+//            scrollRequest.scroll(TimeValue.timeValueSeconds(1));
+            //模拟滚动Id超时
+//            Thread.sleep(3000);
+            SearchResponse searchResponse1 = restHighLevelClient.scroll(scrollRequest, RequestOptions.DEFAULT);
+
+            hits = searchResponse1.getHits();
+
+            for (SearchHit hit : hits.getHits()) {
+                System.out.println(hit.getSourceAsString());
+            }
+        }
+    }
+
+    /**
+     * 批量搜索
+     */
+    @Test
+    public void multiSearchRequest() {
+
     }
 
 }
