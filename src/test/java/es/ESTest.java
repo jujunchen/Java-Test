@@ -29,6 +29,8 @@ import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Node;
@@ -52,12 +54,23 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.AvgAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.ParsedAvg;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.junit.After;
 import org.junit.Test;
 
@@ -381,6 +394,8 @@ public class ESTest {
         BulkRequest bulkRequest = new BulkRequest();
         bulkRequest.add(new IndexRequest(INDEX).id("4").source("name", "小红", "sex", "女"));
         bulkRequest.add(new IndexRequest(INDEX).id("5").source("name", "小黄", "sex", "男"));
+        bulkRequest.add(new IndexRequest(INDEX).id("8").source("name", "小黄8", "sex", "男", "age", 18));
+        bulkRequest.add(new IndexRequest(INDEX).id("9").source("name", "小黄9", "sex", "男", "age", 19));
 
         //同步方式请求
         BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
@@ -550,6 +565,58 @@ public class ESTest {
         for (TermVectorsResponse termVectorsRespons : response.getTermVectorsResponses()) {
             System.out.println(termVectorsRespons.getId());
         }
+    }
+
+    /**
+     * 搜索请求
+     */
+    @SneakyThrows
+    @Test
+    public void searchRequest() {
+        SearchRequest searchRequest = new SearchRequest(INDEX);
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//        默认，按分数排序
+//        searchSourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
+        //按ID排序
+        searchSourceBuilder.sort(new FieldSortBuilder("_id").order(SortOrder.ASC));
+        //关闭源筛选
+//        searchSourceBuilder.fetchSource(false);
+
+        searchSourceBuilder.query(QueryBuilders.termQuery("sex", "男"));
+        //设置高亮显示
+
+        //请求聚合
+//        TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.avg("avg_age").field("age");
+        AvgAggregationBuilder avgAggregationBuilder = AggregationBuilders.avg("avg_age").field("age");
+//        termsAggregationBuilder.subAggregation();
+        searchSourceBuilder.aggregation(avgAggregationBuilder);
+
+        //建议请求
+
+        searchRequest.source(searchSourceBuilder);
+
+        //从0开始搜索
+        searchSourceBuilder.from(0);
+
+        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+
+
+        SearchHits hits = searchResponse.getHits();
+        //搜索结果总数量
+        System.out.println(hits.getTotalHits().value);
+
+        for (SearchHit hit : hits.getHits()) {
+            //json形式返回结果
+            System.out.println(hit.getSourceAsString());
+            //返回键值对的形式
+            Map<String, Object> stringObjectMap = hit.getSourceAsMap();
+        }
+
+        //搜索结果聚合
+        Aggregations aggregations = searchResponse.getAggregations();
+        Map<String, Aggregation> byAgeAvg = aggregations.getAsMap();
+        System.out.println("avg_age = " + ((ParsedAvg)byAgeAvg.get("avg_age")).getValue());
     }
 
 }
