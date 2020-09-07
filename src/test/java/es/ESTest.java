@@ -670,7 +670,7 @@ public class ESTest {
     }
 
     /**
-     * 批量搜索
+     * 批量搜索，查询不准确
      */
     @SneakyThrows
     @Test
