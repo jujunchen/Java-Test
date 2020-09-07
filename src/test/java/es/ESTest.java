@@ -22,6 +22,9 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.fieldcaps.FieldCapabilities;
+import org.elasticsearch.action.fieldcaps.FieldCapabilitiesRequest;
+import org.elasticsearch.action.fieldcaps.FieldCapabilitiesResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetItemResponse;
@@ -679,14 +682,15 @@ public class ESTest {
 
         SearchRequest searchRequest1 = new SearchRequest(INDEX);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//        searchSourceBuilder.query(QueryBuilders.boolQuery().should(QueryBuilders.termQuery("name", "小红")));
-        searchSourceBuilder.query(QueryBuilders.matchQuery("name", "小红"));
+//        searchSourceBuilder.query(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("name", "小红")));
+        searchSourceBuilder.query(QueryBuilders.matchQuery("sex", "女"));
         searchRequest1.source(searchSourceBuilder);
         multiSearchRequest.add(searchRequest1);
 
+        //查询不到结果,todo
         SearchRequest searchRequest2 = new SearchRequest(INDEX);
         SearchSourceBuilder searchSourceBuilder2 = new SearchSourceBuilder();
-        searchSourceBuilder2.query(QueryBuilders.termQuery("name", "小陈"));
+        searchSourceBuilder2.query(QueryBuilders.wildcardQuery("name", "小黄"));
         searchRequest2.source(searchSourceBuilder2);
         multiSearchRequest.add(searchRequest2);
 
@@ -699,6 +703,26 @@ public class ESTest {
                 System.out.println(hit.getSourceAsString());
             }
         }
+    }
+
+    /**
+     * 跨索引字段搜索请求
+     * // TODO: 20-9-8 有什么用呢？
+     */
+    @Test
+    @SneakyThrows
+    public void fieldCapabilitiesRequest() {
+        FieldCapabilitiesRequest request = new FieldCapabilitiesRequest().fields("name").indices(INDEX);
+
+        FieldCapabilitiesResponse response = restHighLevelClient.fieldCaps(request, RequestOptions.DEFAULT);
+
+        Map<String, FieldCapabilities> fieldCapabilitiesMap = response.getField("name");
+
+        FieldCapabilities fieldCapabilities = fieldCapabilitiesMap.get("text");
+
+        //数据能否被搜索到
+        boolean isSearchable = fieldCapabilities.isSearchable();
+
     }
 
 }
