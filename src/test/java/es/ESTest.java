@@ -722,7 +722,6 @@ public class ESTest {
 
         //数据能否被搜索到
         boolean isSearchable = fieldCapabilities.isSearchable();
-
     }
 
 }
