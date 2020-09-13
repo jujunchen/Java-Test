@@ -672,6 +672,7 @@ public class ESTest {
         }
     }
 
+
     /**
      * 批量搜索，查询不准确
      */
@@ -704,6 +705,7 @@ public class ESTest {
             }
         }
     }
+
 
     /**
      * 跨索引字段搜索请求
