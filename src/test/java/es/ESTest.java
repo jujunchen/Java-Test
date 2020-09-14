@@ -62,6 +62,13 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.rankeval.EvaluationMetric;
+import org.elasticsearch.index.rankeval.PrecisionAtK;
+import org.elasticsearch.index.rankeval.RankEvalRequest;
+import org.elasticsearch.index.rankeval.RankEvalResponse;
+import org.elasticsearch.index.rankeval.RankEvalSpec;
+import org.elasticsearch.index.rankeval.RatedDocument;
+import org.elasticsearch.index.rankeval.RatedRequest;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.ReindexRequest;
@@ -80,7 +87,10 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.junit.After;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -724,6 +734,35 @@ public class ESTest {
 
         //数据能否被搜索到
         boolean isSearchable = fieldCapabilities.isSearchable();
+    }
+
+
+    /**
+     * 搜结果排序评估
+     *
+     * 对一组搜索请求的结果进行排序评估，以便衡量搜索结果的质量
+     */
+    @SneakyThrows
+    @Test
+    public void rankEvalRequest() {
+        EvaluationMetric metric = new PrecisionAtK();
+        ArrayList<RatedDocument> ratedDocs = new ArrayList<>();
+        //添加按索引名称、ID和分级指定的分级文档
+        ratedDocs.add(new RatedDocument(INDEX,"1",1));
+        SearchSourceBuilder searchQuery = new SearchSourceBuilder();
+        //创建要评估的搜索查询
+        searchQuery.query(QueryBuilders.matchQuery("sex", "男"));
+        //将前三部分合并为RatedRequest
+        RatedRequest ratedRequest = new RatedRequest("content_query", ratedDocs, searchQuery);
+        List<RatedRequest> ratedRequests = Arrays.asList(ratedRequest);
+        //创建排序评估规范
+        RankEvalSpec specification = new RankEvalSpec(ratedRequests, metric);
+        //创建排序评估请求
+        RankEvalRequest request = new RankEvalRequest(specification, new String[]{INDEX});
+        RankEvalResponse response = restHighLevelClient.rankEval(request, RequestOptions.DEFAULT);
+        //整体结果
+        System.out.println(response.getMetricScore());
+
     }
 
 }
