@@ -99,7 +99,7 @@ import java.util.Map;
  */
 public class ESTest {
 
-    private static final String HOST = "es-cn-6ja1st4nc00082bam.public.elasticsearch.aliyuncs.com";
+    private static final String HOST = "10.211.55.11";
     private static final Integer PORT = 9200;
     public static final String PROTOCOL = "http";
 
@@ -119,7 +119,7 @@ public class ESTest {
         RestClientBuilder builder = RestClient.builder(new HttpHost(HOST, PORT, PROTOCOL));
         //配置账号密码
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "Elastic123456"));
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "elastic"));
         //设置账号密码
         builder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
             @Override
@@ -137,7 +137,7 @@ public class ESTest {
         RestClientBuilder builder = RestClient.builder(new HttpHost(HOST, PORT, PROTOCOL));
         //配置账号密码
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "Elastic123456"));
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "elastic"));
 
         //设置请求头
         builder.setDefaultHeaders(new Header[] {new BasicHeader("header", "value")});
