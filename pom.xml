@@ -162,6 +162,12 @@
       <version>2.8.6</version>
     </dependency>
 
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>4.5.11</version>
+    </dependency>
+
     <!--es-->
     <!--低级客户端,高级客户端已经包含-->
     <!--<dependency>
