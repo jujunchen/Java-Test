@@ -484,6 +484,13 @@ public class JavaTest extends TestSuite {
     }
 
 
+    @Test
+    public void test2() {
+        List<String> stringList = new ArrayList<>();
+        System.out.println(stringList.get(0));
+    }
+
+
 }
 
 @Data
