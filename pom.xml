@@ -151,6 +151,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.10</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.db4j</groupId>
       <artifactId>kilim</artifactId>
       <version>2.0.1</version>

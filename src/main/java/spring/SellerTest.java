@@ -2,8 +2,6 @@ package spring;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.nio.channels.Selector;
-
 /**
  * @author: jujun chen
  * @Type

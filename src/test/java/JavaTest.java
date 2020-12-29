@@ -1,32 +1,32 @@
 import junit.framework.TestSuite;
 import lombok.Data;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
-import	java.io.RandomAccessFile;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.CyclicBarrier;
-import	java.util.concurrent.Exchanger;
-import	java.util.HashMap;
-import	java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Exchanger;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -54,6 +54,13 @@ public class JavaTest extends TestSuite {
     }
 
     private static Executor executor = Executors.newFixedThreadPool(5);
+
+
+    @Test
+    public void test3() {
+        String[] space1 = new String[3];
+        String[] space = ArrayUtils.add(space1, "001");
+    }
 
     
     @Test

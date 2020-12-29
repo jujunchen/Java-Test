@@ -1,5 +1,8 @@
 package spring;
 
+import cn.hutool.core.thread.ThreadUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: jujun chen
@@ -42,4 +48,25 @@ public class AspectTest extends BaseSpringTest {
         Seller seller = (Seller) naiveWaiter;
         seller.sell("苹果");
     }
+
+
+    @Test
+    public void test2() {
+        Executor executor = Executors.newFixedThreadPool(200);
+        int i = 0;
+        for (i = 0; i < 200; i++) {
+            Blue blue = new Blue(i);
+            executor.execute(() -> naiveWaiter.greetTo("陈大侠" + blue.getI()));
+        }
+
+        ThreadUtil.sleep(1, TimeUnit.HOURS);
+    }
+
+    @Data
+    @AllArgsConstructor
+    class Blue {
+        private int i;
+
+    }
+
 }

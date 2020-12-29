@@ -1,9 +1,13 @@
 package spring;
 
+import cn.hutool.core.thread.ThreadUtil;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.DeclareParents;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: jujun chen
@@ -15,9 +19,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PreGreetingAspect {
 
-    @Before("execution(* spring.NaiveWaiterService.greetTo(..)) && args(name)")
+    @AfterReturning("execution(* spring.NaiveWaiterService.greetTo(..)) && args(name)")
     public void beforeGreeting(String name) {
-        System.out.println("execution...");
+//        System.out.println("execution...");
+        ThreadUtil.sleep(3, TimeUnit.SECONDS);
         System.out.println("name = " + name);
     }
 
@@ -37,7 +42,7 @@ public class PreGreetingAspect {
         System.out.println("@args");
     }
 
-    @Before("target(Waiter)")
+//    @Before("target(Waiter)")
     public void targetTest() {
         System.out.println("target");
     }
@@ -47,7 +52,7 @@ public class PreGreetingAspect {
         //System.out.println("@target");
     }
 
-    @Before("@within(WaiterService)")
+//    @Before("@within(WaiterService)")
     public void withinTest() {
         System.out.println("@within");
     }

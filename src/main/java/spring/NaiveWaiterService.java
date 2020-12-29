@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class NaiveWaiterService implements Waiter {
     @Override
     public void greetTo(String clientName) {
-        System.out.println("NaiveWaiter:greet to " + clientName + "...");
+//        System.out.println("NaiveWaiter:greet to " + clientName + "...");
     }
 
     @Override

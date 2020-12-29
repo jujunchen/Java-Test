@@ -1,3 +1,5 @@
+package dahua;
+
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -21,12 +23,12 @@ import java.util.stream.Collectors;
 public class DaHuaSpaceIdTExcel {
 
     public static void main(String[] args) {
-        String sqlTmp = "insert into `config_tool`.`ct_mapper_space` ( `connect_system_id`, `type`, `gt_space_id`, `subsystem_space_id`, `gmt_create`, `gmt_modify`, `status`, `space_name`, `type_name`) values ( '96', '%s', '%s', '%s', %s, %s, '0', '%s', '%s');";
+        String sqlTmp = "insert into `config_tool`.`ct_mapper_space` ( `connect_system_id`, `type`, `gt_space_id`, `subsystem_space_id`, `gmt_create`, `gmt_modify`, `status`, `space_name`, `type_name`) values ( '96', '%s', '%s', '%s', '%s', '%s', '0', '%s', '%s');";
         String json = FileUtil.readUtf8String("/Users/chenjujun/Desktop/orgjson.txt");
         JSONArray jsonArray = JSON.parseObject(json).getJSONArray("data");
         //转换后的大华弱电系统组织数据
         List<Map<String, String>> jsonData = new ArrayList<>();
-        List<Object> jsonList = jsonArray.parallelStream().filter(item -> !StrUtil.equals(((JSONObject) item).getString("orgCode"), "001")).filter(item -> !StrUtil.equals(((JSONObject) item).getString("orgCode"), "056")).sorted(Comparator.comparing(item -> ((JSONObject) item).getLong("orgCode"))).collect(Collectors.toList());
+        List<Object> jsonList = jsonArray.parallelStream().filter(item -> !StrUtil.equals(((JSONObject) item).getString("orgCode"), "001")).filter(item -> !StrUtil.equals(((JSONObject) item).getString("orgCode"), "056")).filter(item -> !StrUtil.equals(((JSONObject) item).getString("orgCode"), "005")).sorted(Comparator.comparing(item -> ((JSONObject) item).getLong("orgCode"))).collect(Collectors.toList());
         for (Object o : jsonList) {
             JSONObject jsonObject = (JSONObject) o;
             String orgCode  = jsonObject.getString("orgCode");
