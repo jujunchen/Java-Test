@@ -1,8 +1,14 @@
 package spring;
 
+import cn.hutool.core.thread.NamedThreadFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import spring.springCache.UserService;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: jujun chen
@@ -14,6 +20,12 @@ public class SpringCacheTest extends BaseSpringTest {
 
     @Autowired
     UserService userService;
+
+    private static ThreadPoolExecutor threadPoolExecutor;
+
+    static {
+        threadPoolExecutor = new ThreadPoolExecutor(5, 10, 2, TimeUnit.SECONDS, new LinkedBlockingQueue<>(100), new ThreadPoolExecutor.CallerRunsPolicy());
+    }
 
     @Test
     public void getUserNameTest() {
@@ -37,6 +49,24 @@ public class SpringCacheTest extends BaseSpringTest {
 
 
     }
+
+
+    @Test
+    public void getTest() throws InterruptedException {
+        threadPoolExecutor.submit(new Thread1());
+        TimeUnit.SECONDS.sleep(1);
+    }
+
+    class Thread1 implements Runnable {
+
+
+        @Override
+        public void run() {
+            String userName = userService.getUserNameById(1);
+            System.out.println(userName);
+        }
+    }
+
 
 
 
