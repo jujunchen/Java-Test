@@ -1,6 +1,5 @@
 import junit.framework.TestSuite;
-import lombok.Data;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,14 +15,7 @@ import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Exchanger;
@@ -33,6 +25,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 /**
@@ -497,6 +490,33 @@ public class JavaTest extends TestSuite {
         System.out.println(stringList.get(0));
     }
 
+    @Test
+    public void test4() {
+        List<Integer> integerList = new ArrayList<>();
+        integerList.add(1);
+        integerList.add(2);
+
+        integerList = integerList.stream().map(i -> {return i +1;}).collect(Collectors.toList());
+        System.out.println(integerList);
+    }
+
+
+    @Test
+    public void test5() {
+        TreeSet treeSet = new TreeSet<Person>(Comparator.comparing(Person::getAge));
+        Person person0 = Person.builder().age(19).build();
+        Person person = Person.builder().age(10).build();
+        Person person1 = Person.builder().age(11).build();
+        Person person2 = Person.builder().age(12).build();
+        Person person3 = Person.builder().age(12).build();
+        treeSet.add(person0);
+        treeSet.add(person);
+        treeSet.add(person1);
+        treeSet.add(person2);
+        treeSet.add(person3);
+        System.out.println(treeSet);
+    }
+
 
 }
 
@@ -509,9 +529,6 @@ class Voucher {
 class Voucher2 {
     private Integer[] status;
 }
-
-
-
 
 
 
@@ -538,7 +555,11 @@ enum SingleEnum {
     }
 }
 
-
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 class Person {
     private String name;
+    private Integer age;
 }

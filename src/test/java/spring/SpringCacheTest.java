@@ -1,8 +1,13 @@
 package spring;
 
+import lombok.SneakyThrows;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import spring.springCache.UserService;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: jujun chen
@@ -13,7 +18,7 @@ import spring.springCache.UserService;
 public class SpringCacheTest extends BaseSpringTest {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Test
     public void getUserNameTest() {
@@ -34,10 +39,31 @@ public class SpringCacheTest extends BaseSpringTest {
         userService.deleteUserNameById(1);
         String newCacheName2 = userService.getUserNameById(1);
         System.out.println(newCacheName2);
-
-
     }
 
+    private  static ThreadPoolExecutor threadPoolExecutor ;
 
+    static {
+        threadPoolExecutor = new ThreadPoolExecutor(3,
+                10, 2,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(100),
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+    }
+
+    @SneakyThrows
+    @Test
+    public void threadTest() {
+        threadPoolExecutor.submit(new Test123());
+        TimeUnit.MINUTES.sleep(1);
+    }
+
+    class Test123 implements Runnable {
+        @Override
+        public void run() {
+            System.out.println(SpringCacheTest.this.userService.getUserNameById(1));
+        }
+    }
 
 }
