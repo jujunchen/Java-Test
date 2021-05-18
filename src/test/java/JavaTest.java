@@ -25,6 +25,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -515,6 +516,24 @@ public class JavaTest extends TestSuite {
         treeSet.add(person2);
         treeSet.add(person3);
         System.out.println(treeSet);
+    }
+
+
+    @Test
+    public void test6() {
+        List<Person> personList = new ArrayList<>();
+        Person person0 = Person.builder().age(19).build();
+        Person person = Person.builder().age(10).build();
+        Person person1 = Person.builder().age(11).build();
+        Person person2 = Person.builder().age(12).build();
+        Person person3 = Person.builder().age(12).build();
+        personList.add(person0);
+        personList.add(person);
+        personList.add(person1);
+        personList.add(person2);
+        personList.add(person3);
+        Map<Integer, Person> map = personList.parallelStream().distinct().collect(Collectors.toMap(Person::getAge, Function.identity()));
+        System.out.println(map);
     }
 
 

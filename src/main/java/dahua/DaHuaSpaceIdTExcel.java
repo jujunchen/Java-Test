@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class DaHuaSpaceIdTExcel {
 
     public static void main(String[] args) {
-        String sqlTmp = "insert into `config_tool`.`ct_mapper_space` ( `connect_system_id`, `type`, `gt_space_id`, `subsystem_space_id`, `gmt_create`, `gmt_modify`, `status`, `space_name`, `type_name`) values ( '96', '%s', '%s', '%s', '%s', '%s', '0', '%s', '%s');";
+        String sqlTmp = "insert into `config_tool`.`ct_mapper_space` ( `connect_system_id`, `type`, `gt_space_id`, `subsystem_space_id`, `gmt_create`, `gmt_modify`, `status`, `space_name`, `type_name`) values ( '100', '%s', '%s', '%s', '%s', '%s', '0', '%s', '%s');";
         String json = FileUtil.readUtf8String("/Users/chenjujun/Desktop/orgjson.txt");
         JSONArray jsonArray = JSON.parseObject(json).getJSONArray("data");
         //转换后的大华弱电系统组织数据
@@ -43,7 +43,7 @@ public class DaHuaSpaceIdTExcel {
             }
         }
         //excel读取组织数据
-        ExcelReader excelReader = new ExcelReader("/Users/chenjujun/Desktop/海月花园2.xlsx", 0);
+        ExcelReader excelReader = new ExcelReader("/Users/chenjujun/Desktop/海月花园-uat.xlsx", 0);
         List<Map<String, Object>> excelData = excelReader.readAll();
         StringBuilder stringBuilder = new StringBuilder();
         for (Map<String, String> jsonMap : jsonData) {
