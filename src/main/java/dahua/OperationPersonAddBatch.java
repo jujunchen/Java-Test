@@ -22,10 +22,10 @@ import java.util.concurrent.TimeUnit;
 public class OperationPersonAddBatch {
 
     public static void main(String[] args) {
-        ExcelReader excelReader = new ExcelReader("/Volumes/UDisk/公司/绿城/人员批量导入/衢州礼贤淳礼园人员导入.xlsx", 0);
+        ExcelReader excelReader = new ExcelReader("/Volumes/UDisk/公司/绿城/人员批量导入/衢州礼贤未来社区人员导入.xlsx", 0);
         List<Map<String, Object>> excelData = excelReader.readAll();
 
-        ExcelReader spaceExcelReader = new ExcelReader("/Volumes/UDisk/公司/绿城/人员批量导入/衢州礼贤淳礼园空间.xlsx", 0);
+        ExcelReader spaceExcelReader = new ExcelReader("/Volumes/UDisk/公司/绿城/人员批量导入/衢州礼未来社区空间.xlsx", 0);
         List<Map<String, Object>> spaceExcelData = spaceExcelReader.readAll();
         Map<String, String> spaceMap = new HashMap<>();
         spaceExcelData.forEach(item -> {
@@ -70,7 +70,7 @@ public class OperationPersonAddBatch {
                 } else {
                     person = Person.builder().customerType("KINSFOLK").houseId(houseId).idcard(idCard).name(name).userPhone(phone).build();
                 }*/
-                Person person = Person.builder().customerType(customerType).houseId(houseId).idcard(idCard).name(name).userPhone(phone).build();
+                Person person = Person.builder().customerType("OWNER").houseId(houseId).idcard(idCard).name(name).userPhone(phone).build();
                 JSONObject resultObject = sendData(url, JSON.toJSONString(person));
                 if (!resultObject.getString("code").equals("0")) {
                     String msg = resultObject.getString("msg");
@@ -86,7 +86,7 @@ public class OperationPersonAddBatch {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            ThreadUtil.sleep(1, TimeUnit.SECONDS);
+            ThreadUtil.sleep(300, TimeUnit.MILLISECONDS);
             row++;
         }
     }
@@ -94,7 +94,7 @@ public class OperationPersonAddBatch {
 
     private static JSONObject sendData(String url, String body) {
         HttpRequest httpRequest = HttpRequest.post(url);
-        httpRequest.header("access-token", "7af6df1efef24f1c857b172962605dfa");
+        httpRequest.header("access-token", "2bd717f5b09f45469d7766d70aadaa47");
         String result = httpRequest.body(body).execute().body();
         return JSON.parseObject(result);
     }
