@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 public class OperationPersonAddBatch {
 
     public static void main(String[] args) {
-        ExcelReader excelReader = new ExcelReader("/Volumes/UDisk/公司/绿城/人员批量导入/衢州礼贤未来社区人员导入.xlsx", 0);
+        ExcelReader excelReader = new ExcelReader("/Users/chenjujun/绿城资料/导入/海月花园.xlsx", 0);
         List<Map<String, Object>> excelData = excelReader.readAll();
 
-        ExcelReader spaceExcelReader = new ExcelReader("/Volumes/UDisk/公司/绿城/人员批量导入/衢州礼未来社区空间.xlsx", 0);
+        ExcelReader spaceExcelReader = new ExcelReader("/Users/chenjujun/绿城资料/导入/海月花园空间.xlsx", 0);
         List<Map<String, Object>> spaceExcelData = spaceExcelReader.readAll();
         Map<String, String> spaceMap = new HashMap<>();
         spaceExcelData.forEach(item -> {
@@ -46,6 +47,9 @@ public class OperationPersonAddBatch {
         String url = "https://operationgw.gtdreamlife.com/householder";
 
         int row = 0;
+
+        //错误记录
+        List<Person> errorList = new ArrayList<>();
 
         for (Map<String, Object> item : excelData) {
             try {
@@ -75,10 +79,22 @@ public class OperationPersonAddBatch {
                 if (!resultObject.getString("code").equals("0")) {
                     String msg = resultObject.getString("msg");
                     System.out.println("新增失败：" + person + " " + msg);
-                    if ("该房屋已存在一个业主".equals(msg)) {
+                    if ("该房屋已存在一个业主".equals(msg) || StringUtils.isBlank(idCard)) {
                         person = Person.builder().customerType("KINSFOLK").houseId(houseId).idcard(idCard).name(name).userPhone(phone).build();
                         resultObject = sendData(url, JSON.toJSONString(person));
-                        System.out.println(resultObject);
+                        if (!resultObject.getString("code").equals("0")) {
+                            msg = resultObject.getString("msg");
+                            System.out.println("新增失败：" + person + " " + msg);
+
+                            person.setErrMsg(msg);
+                            errorList.add(person);
+                        } else {
+                            System.out.println("新增成功:" + person);
+                        }
+                    } else {
+                        //失败
+                        person.setErrMsg(msg);
+                        errorList.add(person);
                     }
                 } else {
                     System.out.println("新增成功:" + person);
@@ -89,12 +105,16 @@ public class OperationPersonAddBatch {
             ThreadUtil.sleep(300, TimeUnit.MILLISECONDS);
             row++;
         }
+        //打印错误数据
+        for (Person person : errorList) {
+            System.out.println(person.getName() + " " + person.getUserPhone() + " " + person.getIdcard() + " " + person.getErrMsg());
+        }
     }
 
 
     private static JSONObject sendData(String url, String body) {
         HttpRequest httpRequest = HttpRequest.post(url);
-        httpRequest.header("access-token", "2bd717f5b09f45469d7766d70aadaa47");
+        httpRequest.header("access-token", "8a58263c9be84ee090c7ed9f9e6ce59c");
         String result = httpRequest.body(body).execute().body();
         return JSON.parseObject(result);
     }
@@ -133,4 +153,6 @@ class Person {
      * 手机号
      */
     private String userPhone;
+
+    private String errMsg;
 }

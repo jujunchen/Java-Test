@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 /**
@@ -22,6 +23,14 @@ import java.util.StringTokenizer;
  * @date 2020/08/02
  */
 public class StringTest {
+
+    @Test
+    public void test33() {
+        Integer aa = null;
+        int bb = 0;
+        System.out.println(aa == bb);
+    }
+
 
     @Test
     public void test1() {
