@@ -7,6 +7,9 @@ import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.crypto.digest.MD5;
+
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -532,8 +535,29 @@ public class JavaTest extends TestSuite {
         personList.add(person1);
         personList.add(person2);
         personList.add(person3);
-        Map<Integer, Person> map = personList.parallelStream().distinct().collect(Collectors.toMap(Person::getAge, Function.identity()));
+        Map<Integer, Person> map = personList.parallelStream().collect(Collectors.toMap(Person::getAge, Function.identity(), (k1,k2) -> k1));
         System.out.println(map);
+    }
+
+
+    @Test
+    public void test7() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("appId", "6e660e0da56049498a3e634d384d62e4");
+        params.put("appSecret", "ece83a3c372b4d7787b3b5087a437237");
+        params.put("urlSchemes", "A5B3AKEV02O00");
+        params.put("unionId", "1234567890");
+        params.put("credits", 100);
+        params.put("projectId", 20090);
+        params.put("type", "1001");
+        params.put("timestamp", "1629034194000");
+        params.put("description", "");
+
+        //引入Hutool 新版本，老版本没有该方法
+        String str = MapUtil.sortJoin(params, "", "", false);
+        String newSign = MD5.create().digestHex(str); 
+        System.out.println(str);
+        System.out.println(newSign);
     }
 
 
