@@ -171,7 +171,7 @@
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
-      <version>4.5.11</version>
+      <version>5.2.5</version>
     </dependency>
 
     <!--excel-->
@@ -221,6 +221,45 @@
       <artifactId>elasticsearch-rest-client-sniffer</artifactId>
       <version>7.4.0</version>
     </dependency>
+
+
+    <!-- jaxb依赖包 -->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    
+    <!--reacotr测试-->
+    <dependency>
+    	<groupId>io.projectreactor</groupId>
+    	<artifactId>reactor-core</artifactId>
+    	<version>3.2.0.RELEASE</version>
+    </dependency>
+    <dependency>
+    	<groupId>io.projectreactor</groupId>
+    	<artifactId>reactor-test</artifactId>
+    	<version>3.2.0.RELEASE</version>
+    	<scope>test</scope>
+    </dependency>
+   	
+   	
+
 
   </dependencies>
 

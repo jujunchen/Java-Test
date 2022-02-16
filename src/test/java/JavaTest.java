@@ -1,5 +1,7 @@
 import junit.framework.TestSuite;
 import lombok.*;
+
+import org.apache.commons.compress.archivers.zip.X000A_NTFS;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -9,6 +11,8 @@ import org.springframework.util.CollectionUtils;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.crypto.digest.MD5;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.json.JSON;
 
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
@@ -31,6 +35,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author: jujun chen
@@ -543,21 +550,81 @@ public class JavaTest extends TestSuite {
     @Test
     public void test7() {
         Map<String, Object> params = new HashMap<>();
-        params.put("appId", "6e660e0da56049498a3e634d384d62e4");
-        params.put("appSecret", "ece83a3c372b4d7787b3b5087a437237");
-        params.put("urlSchemes", "A5B3AKEV02O00");
-        params.put("unionId", "1234567890");
-        params.put("credits", 100);
-        params.put("projectId", 20090);
-        params.put("type", "1001");
-        params.put("timestamp", "1629034194000");
-        params.put("description", "");
+        params.put("appId","d29b40350c294bdbb1c0d0275f6b1649");
+        params.put("projectIdThird", "wlsq01");
+        params.put("communityIdThird", "1000071");
+        params.put("eventSource", "LLT");
+        params.put("eventTypeThird", "公共维修");
+        params.put("eventTime", "2021-10-15 19:43:27");
+        params.put("position", "鼎创财富中心");
+        params.put("customerName", "火舞");
+        params.put("customerPhone", "13538489837");
+        params.put("description", "是他先动的手");
+        long timestamp = System.currentTimeMillis();
+        params.put("timestamp", timestamp);
+        params.put("appSecret", "0aa4cbf7480a43a98890f761c8563235");
+        params.put("urlSchemes", "A569UQ6CK4000");
+        System.out.println(MapUtil.sortJoin(params, "", "", false));
+        String newSign = MD5.create().digestHex(MapUtil.sortJoin(params, "", "", false));
+        System.out.println(timestamp);
+        System.out.println(newSign);
+    }
+
+    @Test
+    public void test8() {
+        long timestamp = System.currentTimeMillis();
+        Map<String, Object> params = new HashMap<>();
+        params.put("appId","da32fc61d59e490bbb7e85676d53ca5c");
+        params.put("projectIdThird", "wlsq01");
+        params.put("communityIdThird", "1000071");
+        params.put("eventSource", "LLT");
+        params.put("eventTypeThird", "公共维修");
+        params.put("eventTime", "2021-10-15 19:43:27");
+        params.put("position", "鼎创财富中心");
+        params.put("customerName", "火舞");
+        params.put("customerPhone", "13538489837");
+        params.put("description", "是他先动的手");
+        Voucher voucher = new Voucher();
+        voucher.setStatus(1);
+        params.put("bean", voucher);
+        // JSONArray aryList = new JSONArray();
+        // aryList.add("https://www.baidu.com/a.jpg");
+        // aryList.add("https://www.baidu.com/b.jpg");
+        // // String[] aryList = new String[2];
+        // // aryList[0] = "https://www.baidu.com/a.jpg";
+        // // aryList[1] = "https://www.baidu.com/b.jpg";
+        // params.put("picUrls", aryList);
+        // params.put("timestamp", timestamp);
+        // params.put("appSecret", "f648a7aab92f450a967e7831405656b9");
+        // params.put("urlSchemes", "A17GC6UG902800");
 
         //引入Hutool 新版本，老版本没有该方法
-        String str = MapUtil.sortJoin(params, "", "", false);
-        String newSign = MD5.create().digestHex(str); 
+        String json = JSONObject.toJSONString(params);
+        Map<String,Object> map = JSONObject.parseObject(json).getInnerMap();
+        String str = MapUtil.sortJoin(map, "", "", false);
         System.out.println(str);
-        System.out.println(newSign);
+        // String newSign = MD5.create().digestHex(str); 
+        // System.out.println(str + "_" + newSign);
+
+        // Map<String, Object> body = new HashMap<>();
+        // body.put("appId","da32fc61d59e490bbb7e85676d53ca5c");
+        // body.put("projectIdThird", "wlsq01");
+        // body.put("communityIdThird", "1000071");
+        // body.put("eventSource", "LLT");
+        // body.put("eventTypeThird", "公共维修");
+        // body.put("eventTime", "2021-10-15 19:43:27");
+        // body.put("position", "鼎创财富中心");
+        // body.put("customerName", "火舞");
+        // body.put("customerPhone", "13538489837");
+        // body.put("description", "是他先动的手");
+        // // body.put("picUrls", aryList);
+        // body.put("timestamp", timestamp);
+        // body.put("sign", newSign);
+
+        // HttpRequest httpRequest = HttpRequest.post("localhost:7013/open/event/push");
+        // String result = httpRequest.body(JSONObject.toJSONString(body)).execute().body();
+        // System.out.println(JSONObject.toJSONString(body));
+        // System.out.println(result);
     }
 
 

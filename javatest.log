@@ -1,7 +1,14 @@
-2020-08-11 14:21:23.008 [main] INFO  o.s.t.c.s.DefaultTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
-2020-08-11 14:21:23.056 [main] INFO  o.s.t.c.s.DefaultTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@16aa8654, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@6d7fc27, org.springframework.test.context.support.DirtiesContextTestExecutionListener@45ac5f9b, org.springframework.test.context.transaction.TransactionalTestExecutionListener@135606db, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@518caac3]
-2020-08-11 14:21:23.977 [main] INFO  o.s.j.d.e.EmbeddedDatabaseFactory - Starting embedded database: url='jdbc:hsqldb:mem:0c0b2d13-3ddd-4bc7-8414-a5efe6ce72c1', username='sa'
-2020-08-11 14:21:24.369 [main] INFO  o.s.aop.framework.CglibAopProxy - Unable to proxy interface-implementing method [public final void org.springframework.transaction.support.AbstractPlatformTransactionManager.rollback(org.springframework.transaction.TransactionStatus) throws org.springframework.transaction.TransactionException] because it is marked as final: Consider using interface-based JDK proxies instead!
-2020-08-11 14:21:24.369 [main] INFO  o.s.aop.framework.CglibAopProxy - Unable to proxy interface-implementing method [public final void org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(org.springframework.transaction.TransactionStatus) throws org.springframework.transaction.TransactionException] because it is marked as final: Consider using interface-based JDK proxies instead!
-2020-08-11 14:21:24.370 [main] INFO  o.s.aop.framework.CglibAopProxy - Unable to proxy interface-implementing method [public final org.springframework.transaction.TransactionStatus org.springframework.transaction.support.AbstractPlatformTransactionManager.getTransaction(org.springframework.transaction.TransactionDefinition) throws org.springframework.transaction.TransactionException] because it is marked as final: Consider using interface-based JDK proxies instead!
-2020-08-11 14:21:24.452 [Thread-0] INFO  o.s.j.d.e.EmbeddedDatabaseFactory - Shutting down embedded database: url='jdbc:hsqldb:mem:0c0b2d13-3ddd-4bc7-8414-a5efe6ce72c1'
+2022-02-16 16:34:21.182 [main] INFO  reactor.Flux.SubscribeOn.1 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:34:21.187 [main] INFO  reactor.Flux.SubscribeOn.1 - request(unbounded)
+2022-02-16 16:34:46.179 [main] INFO  reactor.Flux.SubscribeOn.1 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:34:46.183 [main] INFO  reactor.Flux.SubscribeOn.1 - request(unbounded)
+2022-02-16 16:36:56.132 [main] INFO  reactor.Flux.SubscribeOn.1 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:36:56.136 [main] INFO  reactor.Flux.SubscribeOn.1 - request(32)
+2022-02-16 16:36:56.138 [main] INFO  reactor.Flux.SubscribeOn.2 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:36:56.138 [main] INFO  reactor.Flux.SubscribeOn.2 - request(32)
+2022-02-16 16:38:53.858 [main] INFO  reactor.Flux.SubscribeOn.1 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:38:53.862 [main] INFO  reactor.Flux.SubscribeOn.1 - request(32)
+2022-02-16 16:38:53.864 [main] INFO  reactor.Flux.SubscribeOn.2 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:38:53.864 [main] INFO  reactor.Flux.SubscribeOn.2 - request(32)
+2022-02-16 16:39:28.030 [main] INFO  reactor.Flux.SubscribeOn.1 - onSubscribe(FluxSubscribeOn.SubscribeOnSubscriber)
+2022-02-16 16:39:28.034 [main] INFO  reactor.Flux.SubscribeOn.1 - request(32)
