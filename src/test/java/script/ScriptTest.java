@@ -189,7 +189,7 @@ public class ScriptTest extends TestSuite {
     public void groovyFile() throws Exception{
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("groovy");
-        //不同方法间换行、测试一下
+        //不同方法间换行
         String script = "def hello() {return \"xxx\";}\n def hello2() {return \"xxx2\";}";
 //        engine.eval(new FileReader(new File("/Users/chenjujun/java-projects/Java-Test/src/test/java/script/test.groovy")));
         engine.eval(script);
