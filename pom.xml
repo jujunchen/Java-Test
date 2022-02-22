@@ -257,6 +257,18 @@
     	<version>3.2.0.RELEASE</version>
     	<scope>test</scope>
     </dependency>
+    
+        <!--groovy脚本-->
+    <dependency>
+	    <groupId>org.codehaus.groovy</groupId>
+	    <artifactId>groovy</artifactId>
+	    <version>3.0.9</version>
+	</dependency>
+   	<dependency>
+	    <groupId>org.codehaus.groovy</groupId>
+	    <artifactId>groovy-jsr223</artifactId>
+	    <version>3.0.9</version>
+	</dependency>
    	
    	
 
