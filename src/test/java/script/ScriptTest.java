@@ -3,9 +3,11 @@ package script;
 import junit.framework.TestSuite;
 import org.junit.Test;
 
+import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.New;
 import javax.script.Bindings;
 import javax.script.Invocable;
@@ -26,7 +28,7 @@ import java.util.Date;
  * @date: 2019/12/07
  */
 public class ScriptTest extends TestSuite {
-
+	
 
     /**
      * 从文件中读取Js脚本
@@ -198,6 +200,26 @@ public class ScriptTest extends TestSuite {
         String msg2 = (String) inv.invokeFunction("hello2", null);
         System.out.println(msg);
         System.out.println(msg2);
+    }
+    
+    @Test
+	public void groovyBindTest() throws ScriptException, NoSuchMethodException {
+    	ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("groovy");
+        String script = "def getName(){return hello.name();}";
+        Bindings binding = engine.createBindings();
+        binding.put("hello", new Hello());
+        engine.eval(script, binding);
+        Invocable invocable = (Invocable) engine;
+        String msg = (String) invocable.invokeFunction("getName", null);
+        System.out.println(msg);
+	}
+    
+    
+    class Hello {
+    	public String name() {
+			return "Test Name";
+		}
     }
 
 

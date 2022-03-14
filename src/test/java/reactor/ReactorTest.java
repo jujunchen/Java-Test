@@ -48,7 +48,7 @@ public class ReactorTest {
 //		newNameFlux.subscribe(item -> System.out.println(item.size()));
 		//异步转换
 //		newNameFlux.flatMap(x -> Flux.fromIterable(x).map(String::toLowerCase).subscribeOn(Schedulers.parallel()).log()).subscribe();
-//		nameFlux.flatMap(n -> Mono.just(n).map(String::toLowerCase).subscribeOn(Schedulers.parallel())).subscribe(System.out::println);
+		nameFlux.flatMap(n -> Mono.just(n).map(String::toLowerCase).subscribeOn(Schedulers.parallel())).subscribe(System.out::println);
 		//collectMap
 //		nameFlux.collectMap(a -> a.charAt(0)).subscribe(item -> System.out.println(item.keySet()));
 		//all，any判断,all都符合条件，any任何一个符合条件

@@ -1,4 +1,4 @@
-package zookeeper.distributeLock;
+package distributeLock.zk;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;

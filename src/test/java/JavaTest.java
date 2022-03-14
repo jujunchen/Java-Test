@@ -9,7 +9,9 @@ import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSON;
@@ -35,6 +37,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+
+import javax.mail.FetchProfile.Item;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -626,6 +630,30 @@ public class JavaTest extends TestSuite {
         // System.out.println(JSONObject.toJSONString(body));
         // System.out.println(result);
     }
+    
+    
+    @Test
+	public void test18() {
+    	String json = "{\"wjy-flowmeter-1\":{\"instantaneous delivery\":\"0.0000\",\"Instantaneous heat flow\":\"0.0000\",\"fluid velocity\":\"0.0000\",\"Measure fluid sound velocity\":\"1328.1700\"},\"Equipment to distinguish\":{\"differentiate-1\":\"123\",\"differentiate-2\":\"0\",\"differentiate-3\":\"11\",\"differentiate-4\":\"0\",\"differentiate-5\":\"22\",\"differentiate-6\":\"0\",\"differentiate-7\":\"33\",\"differentiate-8\":\"0\",\"differentiate-9\":\"44\",\"differentiate-10\":\"0\"}}";
+    	JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(json);
+    	jsonObject.forEach((k,v) -> {
+    		
+    	});
+	}
+    
+    @Test
+	public void name() {
+    	Voucher voucher = new Voucher();
+    	//null == 1  报NPE
+    	assert voucher.getStatus() == 1;
+	}
+    
+    @Test
+	public void snowIdTest() {
+        String snowflakeId = IdUtil.getSnowflake(0, 0).nextIdStr();
+        String id = DateUtil.format(new Date(System.currentTimeMillis()), "yyyyMMddHHmmssSSS") + snowflakeId.substring(15);
+        System.out.println(id);
+	}
 
 
 }
