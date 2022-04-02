@@ -10,12 +10,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSON;
 
+import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -654,6 +656,13 @@ public class JavaTest extends TestSuite {
         String id = DateUtil.format(new Date(System.currentTimeMillis()), "yyyyMMddHHmmssSSS") + snowflakeId.substring(15);
         System.out.println(id);
 	}
+
+
+    @Test
+    public void moveExcel() {
+        String a = "MD";
+        System.out.println(a.getBytes()[1]);
+    }
 
 
 }
