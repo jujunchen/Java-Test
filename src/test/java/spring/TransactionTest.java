@@ -33,7 +33,8 @@ public class TransactionTest extends BaseSpringTest{
 
     @Test
     public void test1() {
-        testService.method1();
+//        testService.method1();
+        testService.method2();
     }
 
     @After

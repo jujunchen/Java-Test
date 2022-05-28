@@ -32,7 +32,7 @@ import java.util.Arrays;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 //@EnableCaching
 //@EnableRetry
-//@EnableTransactionManagement
+@EnableTransactionManagement
 public class SpringConfig {
 
     

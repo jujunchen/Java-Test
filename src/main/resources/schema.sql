@@ -1,6 +1,6 @@
 DROP TABLE person IF EXISTS;
 
 CREATE TABLE person (
-    name VARCHAR(5) NOT NULL,
+    name VARCHAR(10) NOT NULL,
     PRIMARY KEY(name)
 );

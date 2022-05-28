@@ -18,7 +18,7 @@ import javax.sql.DataSource;
  * @date: 2019/11/26
  */
 @Service
-//@Slf4j
+@Slf4j
 public class TransactionTestService {
 
     private static JdbcTemplate jdbcTemplate;
@@ -33,7 +33,7 @@ public class TransactionTestService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void method1() {
-        //log.info("Spring 事务注解");
+        log.info("Spring 事务注解");
         Assert.isTrue(TransactionSynchronizationManager.isActualTransactionActive(), "不在事务中");
         addPerson(jdbcTemplate, "ali");
         addPerson(jdbcTemplate, "jujunchen");
