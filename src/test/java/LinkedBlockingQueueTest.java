@@ -42,8 +42,12 @@ public class LinkedBlockingQueueTest extends TestSuite {
             countDownLatch.countDown();
         });
 
-        countDownLatch.await();
 
+
+        System.out.println(blockingQueue.size());
+        System.out.println(blockingQueue);
+
+        countDownLatch.await();
         System.out.println(blockingQueue.size());
     }
 }
