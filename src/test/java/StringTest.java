@@ -1,5 +1,21 @@
+import cn.hutool.core.codec.Base64;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.AES;
+import lombok.SneakyThrows;
 import org.junit.Test;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 /**
@@ -7,6 +23,14 @@ import java.util.StringTokenizer;
  * @date 2020/08/02
  */
 public class StringTest {
+
+    @Test
+    public void test33() {
+        Integer aa = null;
+        int bb = 0;
+        System.out.println(aa == bb);
+    }
+
 
     @Test
     public void test1() {
@@ -87,5 +111,63 @@ public class StringTest {
         }
         end = System.currentTimeMillis();
         System.out.println("stringBuffer: " + (end - start));
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void test123() {
+        AES aes = SecureUtil.aes("1016e8a7884fadbf".getBytes());
+//        System.out.println(new String(aes.decryptStr("âQxP1òn;z®¹\\u0007?Ü\\u0099W".getBytes("ISO-8859-1"))));
+//        System.out.println(new String(aes.encrypt("123")));
+//        System.out.println(decrypt("âQxP1òn;z®¹\\u0007?Ü\\u0099W".getBytes("ISO-8859-1"), "1016e8a7884fadbf"));
+        System.out.println(Base64.decodeStr("U2FsdGVkX1+/zUL2fcTn9mqGqNS7Hk1aQ+ihDcsm2aU="));
+    }
+
+    /**
+     * AES解密
+     * @param encryptStr 密文
+     * @param decryptKey 秘钥，必须为16个字符组成
+     * @return 明文
+     * @throws Exception
+     */
+    public static String aesDecrypt(String encryptStr, String decryptKey) throws Exception {
+
+        byte[] encryptByte = Base64.decode(encryptStr);
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(StandardCharsets.UTF_8), "AES"));
+        byte[] decryptBytes = cipher.doFinal(encryptByte);
+        return new String(decryptBytes);
+    }
+
+    /**
+     * AES加密
+     * @param content 明文
+     * @param encryptKey 秘钥，必须为16个字符组成
+     * @return 密文
+     * @throws Exception
+     */
+    public static String aesEncrypt(String content, String encryptKey) throws Exception {
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(StandardCharsets.UTF_8), "AES"));
+
+        byte[] encryptStr = cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
+        return Base64.encode(encryptStr);
+    }
+
+    // 测试加密与解密
+    public static void main(String[] args) {
+        try {
+            String secretKey = "1016e8a7884fadbf";
+            String content = "#*451627";
+            String s1 = aesEncrypt(content, secretKey);
+//            String s1 = "BX12QJHsHdjGIQrvaH5Xyg==";
+            System.out.println(s1);
+            String s = aesDecrypt(s1, secretKey);
+            System.out.println(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

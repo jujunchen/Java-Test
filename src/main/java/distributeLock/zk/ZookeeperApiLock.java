@@ -1,4 +1,4 @@
-package zookeeper.distributeLock;
+package distributeLock.zk;
 import	java.util.Random;
 import	java.util.concurrent.CountDownLatch;
 import	java.util.TreeSet;

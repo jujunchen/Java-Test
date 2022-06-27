@@ -23,11 +23,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
- * JSON 转 Excel
+ * 批量删除
  * @author chenjujun
  * @date 12/8/20
  */
-public class DaHuaUpdateResources {
+public class DeleteResources {
 
     public static void main(String[] args) throws InterruptedException {
         //excel读取组织数据
@@ -50,8 +50,8 @@ public class DaHuaUpdateResources {
         // for (Object object : questionJsonArray) {
             // JSONObject jsonObject = (JSONObject) object;
             
-            ResourceBean resourceBean = new ResourceBean();
-            resourceBean.setId(Long.parseLong(excelDatum.get("id").toString()));
+            // ResourceBean resourceBean = new ResourceBean();
+            // resourceBean.setId(Long.parseLong(excelDatum.get("id").toString()));
             // resourceBean.setId(jsonObject.getLong("id"));
 //            resourceBean.setResourceRegion(Long.parseLong(excelDatum.get("space_id").toString()));
             // resourceBean.setResourceRegion(spaceMap.get(jsonObject.getString("subsystem_region")));
@@ -61,15 +61,15 @@ public class DaHuaUpdateResources {
                 System.out.println(resourceBean.getId() + "-获取不到空间");
                 continue;
             } */
-            resourceBean.setResourceCode(excelDatum.get("code").toString());
-            // resourceBean.setStatus(0);
-            String body = JSON.toJSONString(resourceBean);
-            HttpRequest httpRequest = HttpRequest.post("https://greenshop.gtdreamlife.com/config-tool/api/resourceMock");
-            httpRequest.header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI1YzBiYjlkMy0iLCJzdWIiOiI0IiwiaWF0IjoxNjM1NDk2ODUxLCJleHAiOjE2MzU1MDA0NTF9.cJjLDC5QTeOt-UlnCaDAAMKXLcFCPIFWjuDsd_qfB3U");
-            String result = httpRequest.body(body).execute().body();
-            // System.out.println(result);
-            ResourceBean retResources = JSON.parseObject(result, ResourceBean.class);
-            System.out.println(retResources.getId() + "/" + retResources.getResourceRegion());
+            // resourceBean.setStatus(1);
+            // String body = JSON.toJSONString(resourceBean);
+            String id = excelDatum.get("id").toString();
+            HttpRequest httpRequest = HttpRequest.delete("https://operationgw.gtdreamlife.com/config/resourceslist/" + id);
+            httpRequest.header("access-token", "66d94a0abd3140ebb7a8a434841fbe92");
+            String result = httpRequest.execute().body();
+            System.out.println(result);
+            // ResourceBean retResources = JSON.parseObject(result, ResourceBean.class);
+            // System.out.println(retResources.getId() + "/" + retResources.getResourceRegion());
             TimeUnit.MILLISECONDS.sleep(500);
         }
 
@@ -83,8 +83,6 @@ public class DaHuaUpdateResources {
         private Long resourceRegion;
         private String deviceImei;
         private Integer deviceStatus;
-        private String deviceModel;
-        private String resourceCode;
     }
 
 }

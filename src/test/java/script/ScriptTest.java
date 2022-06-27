@@ -3,6 +3,12 @@ package script;
 import junit.framework.TestSuite;
 import org.junit.Test;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyObject;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.New;
 import javax.script.Bindings;
 import javax.script.Invocable;
 import javax.script.ScriptContext;
@@ -13,6 +19,7 @@ import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Date;
 
 /**
  * @author: jujun chen
@@ -21,7 +28,7 @@ import java.io.FileReader;
  * @date: 2019/12/07
  */
 public class ScriptTest extends TestSuite {
-
+	
 
     /**
      * 从文件中读取Js脚本
@@ -35,10 +42,11 @@ public class ScriptTest extends TestSuite {
     public void file() throws Exception{
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
-        engine.eval(new FileReader(new File("/Volumes/doc/javaprojects/javatest/src/test/java/script/test.js")));
+        engine.eval(new FileReader(new File("/Users/chenjujun/java-projects/Java-Test/src/test/java/script/test.js")));
         Invocable inv = (Invocable) engine;
         Object obj = engine.get("obj");
         inv.invokeMethod(obj, "hello", "Script Test!" );
+        inv.invokeMethod(obj, "hello2", "xxxx");
     }
 
     @Test
@@ -131,6 +139,87 @@ public class ScriptTest extends TestSuite {
         Thread thread = new Thread(runnable);
         thread.start();
         Thread.sleep(1000);
+    }
+    
+    /**
+     * groovy脚本使用
+     * @throws ScriptException 
+     * @throws NoSuchMethodException 
+     */
+    
+    ScriptEngineManager manager = new ScriptEngineManager();
+	ScriptEngine engine = manager.getEngineByName("groovy");
+	
+    @Test
+	public void groovyTest() throws ScriptException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    	Bindings bindings = engine.createBindings();
+    	bindings.put("date", new Date());
+    	engine.eval("def getTime(){return date.getTime();}", bindings);
+    	engine.eval("def sayHello(name, age) {return 'Hello,' + name + ',' + age;}");
+    	Invocable invocable = (Invocable) engine;
+    	Long time = (Long) invocable.invokeFunction("getTime", null);
+    	System.out.println(time);
+    	String message = (String) invocable.invokeFunction("sayHello", "zhangsan", 12);
+    	System.out.println(message);
+    	//
+    	Bindings bindings2 = engine.createBindings();
+    	bindings2.put("date", new Date());
+    	engine.eval("def getTime(){return date.getSeconds();}", bindings2);
+    	Integer time2 = (Integer) invocable.invokeFunction("getTime", null);
+    	System.out.println(time2);
+    	
+    	//方法被覆盖
+//    	Long time3 = (Long) invocable.invokeFunction("getTime", null);
+//    	System.out.println(time3);
+    	
+    	engine.eval("def sayHello(name) {return 'Hello,' + getName(name);}");
+    	engine.eval("def getName(name){return '----' + name;}");
+    	String message2 = (String) invocable.invokeFunction("sayHello", "zhangsan");
+    	System.out.println(message2);
+    	
+//    	String helloString = "class Hello{ def sayHello(name) {return 'Hello,' + name;} def getName(){return 'xxx';}}";
+//    	
+//    	GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
+////    	Class helloClass = groovyClassLoader.parseClass("def sayHello(name) {return 'Hello,' + getName(name);} def getName(name){return '----' + name;}");
+//    	Class helloClass = groovyClassLoader.parseClass(helloString);
+//    	GroovyObject object = (GroovyObject) helloClass.newInstance();
+//    	Object retObject = object.invokeMethod("sayHello", "xxx");
+//    	System.out.println(retObject.toString());
+	}
+    
+    @Test
+    public void groovyFile() throws Exception{
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("groovy");
+        //不同方法间换行
+        String script = "def hello() {return \"xxx\";}\n def hello2() {return \"xxx2\";}";
+//        engine.eval(new FileReader(new File("/Users/chenjujun/java-projects/Java-Test/src/test/java/script/test.groovy")));
+        engine.eval(script);
+        Invocable inv = (Invocable) engine;
+        String msg = (String) inv.invokeFunction("hello", null);
+        String msg2 = (String) inv.invokeFunction("hello2", null);
+        System.out.println(msg);
+        System.out.println(msg2);
+    }
+    
+    @Test
+	public void groovyBindTest() throws ScriptException, NoSuchMethodException {
+    	ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("groovy");
+        String script = "def getName(){return hello.name();}";
+        Bindings binding = engine.createBindings();
+        binding.put("hello", new Hello());
+        engine.eval(script, binding);
+        Invocable invocable = (Invocable) engine;
+        String msg = (String) invocable.invokeFunction("getName", null);
+        System.out.println(msg);
+	}
+    
+    
+    class Hello {
+    	public String name() {
+			return "Test Name";
+		}
     }
 
 

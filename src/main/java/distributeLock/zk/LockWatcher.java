@@ -1,4 +1,4 @@
-package zookeeper.distributeLock;
+package distributeLock.zk;
 import	java.util.concurrent.CountDownLatch;
 
 import org.apache.zookeeper.WatchedEvent;
