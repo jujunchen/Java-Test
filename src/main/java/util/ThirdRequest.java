@@ -37,7 +37,7 @@ public class ThirdRequest {
     }
 
     public ThirdRequest form(Map<String, Object> params) {
-        this.body = MapUtil.join(params, "&", "=", "");
+//        this.body = MapUtil.join(params, "&", "=", "");
         httpRequest = httpRequest.form(params);
         return this;
     }

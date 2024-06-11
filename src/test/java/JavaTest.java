@@ -1,7 +1,8 @@
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
+import com.alibaba.fastjson.JSONObject;
 import junit.framework.TestSuite;
 import lombok.*;
-
-import org.apache.commons.compress.archivers.zip.X000A_NTFS;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -9,15 +10,6 @@ import org.junit.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.crypto.digest.MD5;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.json.JSON;
-
-import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,23 +19,11 @@ import java.nio.channels.FileChannel;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.Exchanger;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-
-import javax.mail.FetchProfile.Item;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author: jujun chen
@@ -555,25 +535,25 @@ public class JavaTest extends TestSuite {
 
     @Test
     public void test7() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("appId","d29b40350c294bdbb1c0d0275f6b1649");
-        params.put("projectIdThird", "wlsq01");
-        params.put("communityIdThird", "1000071");
-        params.put("eventSource", "LLT");
-        params.put("eventTypeThird", "公共维修");
-        params.put("eventTime", "2021-10-15 19:43:27");
-        params.put("position", "鼎创财富中心");
-        params.put("customerName", "火舞");
-        params.put("customerPhone", "13538489837");
-        params.put("description", "是他先动的手");
-        long timestamp = System.currentTimeMillis();
-        params.put("timestamp", timestamp);
-        params.put("appSecret", "0aa4cbf7480a43a98890f761c8563235");
-        params.put("urlSchemes", "A569UQ6CK4000");
-        System.out.println(MapUtil.sortJoin(params, "", "", false));
-        String newSign = MD5.create().digestHex(MapUtil.sortJoin(params, "", "", false));
-        System.out.println(timestamp);
-        System.out.println(newSign);
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("appId","d29b40350c294bdbb1c0d0275f6b1649");
+//        params.put("projectIdThird", "wlsq01");
+//        params.put("communityIdThird", "1000071");
+//        params.put("eventSource", "LLT");
+//        params.put("eventTypeThird", "公共维修");
+//        params.put("eventTime", "2021-10-15 19:43:27");
+//        params.put("position", "鼎创财富中心");
+//        params.put("customerName", "火舞");
+//        params.put("customerPhone", "13538489837");
+//        params.put("description", "是他先动的手");
+//        long timestamp = System.currentTimeMillis();
+//        params.put("timestamp", timestamp);
+//        params.put("appSecret", "0aa4cbf7480a43a98890f761c8563235");
+//        params.put("urlSchemes", "A569UQ6CK4000");
+//        System.out.println(MapUtil.sortJoin(params, "", "", false));
+//        String newSign = MD5.create().digestHex(MapUtil.sortJoin(params, "", "", false));
+//        System.out.println(timestamp);
+//        System.out.println(newSign);
     }
 
     @Test
@@ -605,10 +585,10 @@ public class JavaTest extends TestSuite {
         // params.put("urlSchemes", "A17GC6UG902800");
 
         //引入Hutool 新版本，老版本没有该方法
-        String json = JSONObject.toJSONString(params);
-        Map<String,Object> map = JSONObject.parseObject(json).getInnerMap();
-        String str = MapUtil.sortJoin(map, "", "", false);
-        System.out.println(str);
+//        String json = JSONObject.toJSONString(params);
+//        Map<String,Object> map = JSONObject.parseObject(json).getInnerMap();
+//        String str = MapUtil.sortJoin(map, "", "", false);
+//        System.out.println(str);
         // String newSign = MD5.create().digestHex(str); 
         // System.out.println(str + "_" + newSign);
 
@@ -662,6 +642,23 @@ public class JavaTest extends TestSuite {
     public void moveExcel() {
         String a = "MD";
         System.out.println(a.getBytes()[1]);
+    }
+
+
+    @Test
+    public void foreachTest() {
+        List<String> stringList = new ArrayList<>();
+        stringList.add("a");
+        stringList.add("b");
+        stringList.add("c");
+
+        for (String str : stringList) {
+            if (str.equals("b")) {
+                stringList.remove("b");
+            }
+        }
+
+        System.out.println(stringList);
     }
 
 
