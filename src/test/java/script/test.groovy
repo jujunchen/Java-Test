@@ -1,1 +1,1 @@
-def hello() {return "xxx";} def hello2() {return "xxx2";}
+//def hello() {return "xxx";} def hello2() {return "xxx2";}
