@@ -51,6 +51,23 @@ public class ABATest {
         CountDownLatch countDownLatch = new CountDownLatch(2);
 
         new Thread(() -> {
+            //使用第一次获取的版本，因为不知道有其他线程偷摸改了
+            int stamp = atomicStampedReference.getStamp();
+            System.out.println(Thread.currentThread().getName() + " 第一次版本：" + stamp);
+            try {
+                //等待一下
+                TimeUnit.SECONDS.sleep(2);
+                //这个线程打算修改10->12
+                boolean isSuccess = atomicStampedReference.compareAndSet(10,12, stamp, stamp + 1);
+                System.out.println(Thread.currentThread().getName() + " 修改是否成功：" + isSuccess + " 当前版本：" + atomicStampedReference.getStamp() + " 当前值：" + atomicStampedReference.getReference());
+                countDownLatch.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            //这个线程偷摸的把10->11->10
             System.out.println(Thread.currentThread().getName() + " 第一次版本：" + atomicStampedReference.getStamp());
             atomicStampedReference.compareAndSet(10, 11, atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1);
             System.out.println(Thread.currentThread().getName() + " 第二次版本：" + atomicStampedReference.getStamp());
@@ -59,17 +76,6 @@ public class ABATest {
             countDownLatch.countDown();
         }).start();
 
-        new Thread(() -> {
-            System.out.println(Thread.currentThread().getName() + " 第一次版本：" + atomicStampedReference.getStamp());
-            try {
-                TimeUnit.SECONDS.sleep(2);
-                boolean isSuccess = atomicStampedReference.compareAndSet(10,12, atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1);
-                System.out.println(Thread.currentThread().getName() + " 修改是否成功：" + isSuccess + " 当前版本：" + atomicStampedReference.getStamp() + " 当前值：" + atomicStampedReference.getReference());
-                countDownLatch.countDown();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
 
         countDownLatch.await();
     }
